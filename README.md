@@ -383,6 +383,7 @@ Your final mark will be determined using the following formula:
 
 #### Code
 Each feature attempted by you will be marked using the rubric below.
+
 |Criteria|Grade|Description|
 |-|-|-|
 |Correctness (50%) |HD (100)|Code relevant to feature is free from any apparent errors. Problems are solved in a suitable fashion. Contains no irrelevant code.|
