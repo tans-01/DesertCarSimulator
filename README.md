@@ -406,6 +406,3 @@ Each component of your documentation will be marked using the rubric below.
 |CR (70)|Minor sloppiness or missing detail. Equations are provided but include minor inaccuracies. Minor discrepencies between documentation and code.|
 |P (60)|Significant sloppiness or missing detail. Equations are provided but include major inaccuracies. Values in illustrations show understanding of task, but may not reflect code.|
 |F (0-40)|Illustrations are unclear and badly drawn. Does not make use of graph paper. Equations are not provided or are not relevant to explanation.|
-
-
-					
