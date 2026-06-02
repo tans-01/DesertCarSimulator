@@ -3,10 +3,16 @@ package comp3170.ass3;
 import comp3170.IWindowListener;
 import comp3170.OpenGLException;
 import comp3170.Window;
+import comp3170.ass3.sceneobjects.Desert;
+import static org.lwjgl.opengl.GL11.*;
+
+import java.io.IOException;
+
+import org.joml.Matrix4f;
 
 /**
  * COMP3170 Assignment 3 - 3D desert car simulator
- * Created by Cadigal (47100192) and Tanish (?)
+ * Created by Cadigal (47100192) and Tanish (47896345)
  *
  * Features to implement
  * 1. Scene - Car, ground & trees
@@ -48,6 +54,14 @@ public class Assignment3 implements IWindowListener {
 	private int screenWidth = 1000;
 	private int screenHeight = 1000;
 
+	 private Desert desert;
+
+	    // Camera
+	    private Matrix4f viewMatrix = new Matrix4f();
+	    private Matrix4f projMatrix = new Matrix4f();
+	    private Matrix4f mvpMatrix = new Matrix4f();
+
+	
 	public Assignment3() throws OpenGLException {
 		window = new Window("Assignment 3", screenWidth, screenHeight, this);
 		window.run();
@@ -59,21 +73,48 @@ public class Assignment3 implements IWindowListener {
 
 	@Override
 	public void init() {
-		// Initialise OpenGL and create the scene
-		// run once when the window is created to initialise everything
-	}
+		 try {
+	            desert = new Desert();
+	        } catch (IOException | OpenGLException e) {
+	            e.printStackTrace();
+	        }
+
+	        // Enable depth testing so closer objects appear in front
+	        glEnable(GL_DEPTH_TEST);
+	    }
+	
 
 	@Override
 	public void draw() {
-		// Redraw the scene.
-		// run every frame, to update & render the scene
+		// Clear screen
+        glClearColor(0.5f, 0.8f, 1.0f, 1.0f); // light blue sky
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Simple camera looking down at the desert from above and to the side
+        viewMatrix.setLookAt(
+            0, 50, 80,   // camera position (x, y, z)
+            0, 0, 0,     // look at origin
+            0, 1, 0      // up direction
+        );
+
+        projMatrix.setPerspective(
+            (float) Math.toRadians(60),          // field of view
+            (float) screenWidth / screenHeight,  // aspect ratio
+            0.1f,                                // near plane
+            500f                                 // far plane
+        );
+
+        // MVP = projection * view * model
+        // Desert has no model transform so model = identity
+        mvpMatrix.set(projMatrix).mul(viewMatrix);
+
+        desert.draw(mvpMatrix);
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		// The window has been resized.
-		// This is always called between init() and the first call to draw()
-		// run when the window is resized (e.g. to resize the camera aspect)
+		 screenWidth = width;
+	        screenHeight = height;
 	}
 
 	@Override
