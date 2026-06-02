@@ -9,7 +9,8 @@ import static org.lwjgl.opengl.GL11.*;
 import java.io.IOException;
 
 import org.joml.Matrix4f;
-
+import java.io.File;
+import comp3170.TextureLibrary;
 /**
  * COMP3170 Assignment 3 - 3D desert car simulator
  * Created by Cadigal (47100192) and Tanish (47896345)
@@ -73,6 +74,7 @@ public class Assignment3 implements IWindowListener {
 
 	@Override
 	public void init() {
+		new TextureLibrary(new File("src/comp3170/ass3/textures")); //finding texture library for sand
 		 try {
 	            desert = new Desert();
 	        } catch (IOException | OpenGLException e) {
