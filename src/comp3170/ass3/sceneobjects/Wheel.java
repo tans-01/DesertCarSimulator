@@ -14,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import comp3170.GLBuffers;
 import comp3170.OpenGLException;
@@ -39,10 +40,17 @@ public class Wheel extends SceneObject {
     private int uvBuffer;
     private int indexBuffer;
     private int indexCount;
+    private boolean isFront;
+    private boolean flipped;
+    private org.joml.Vector3f position;
+    private float spinAngle = 0;
+    
+    public Wheel(Vector3f position, boolean isFront, boolean flipped) throws IOException, OpenGLException {
+    	this.position = position;
+        this.isFront = isFront;
+        this.flipped = flipped;
 
-    public Wheel() throws IOException, OpenGLException {
         shader = ShaderLibrary.instance.compileShader(VERT_SHADER, FRAG_SHADER);
-
         texture = TextureLibrary.instance.loadTexture(TEXTURE);
         TextureUtils.setupTexture(texture);
 
@@ -59,7 +67,22 @@ public class Wheel extends SceneObject {
         indexBuffer = GLBuffers.createIndexBuffer(mesh.indices);
         indexCount = mesh.indices.length;
     }
-
+    
+    public void update(float spinDelta, float steerAngle) {
+        spinAngle += spinDelta;             // spin accumulates over time
+        
+        Matrix4f matrix = getMatrix();
+        matrix.identity();                  // rebuild fresh each frame
+        matrix.translate(position);         // place at corner
+        if (flipped) {
+            matrix.rotateY((float) Math.PI); // hubcap faces out
+        }
+        if (isFront) {
+            matrix.rotateY(steerAngle);     // front wheels steer
+        }
+        matrix.rotateX(spinAngle);          // all wheels spin around axle
+    }
+    
     @Override
     protected void drawSelf(Matrix4f mvpMatrix) {
         shader.enable();
