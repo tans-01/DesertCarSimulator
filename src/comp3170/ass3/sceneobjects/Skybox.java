@@ -143,7 +143,6 @@ public class Skybox extends SceneObject {
 		shader.setUniform("u_cubemap", 0);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
 
 		glDepthMask(true);
