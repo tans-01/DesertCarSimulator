@@ -82,6 +82,24 @@ public class Car extends SceneObject {
      // Flip from US (left-hand drive) to Australian (right-hand drive) layout
         getMatrix().scale(-1, 1, 1);
 
+     // four wheels attached to the car as its children
+        float[][] wheelPositions = {
+            {  0.62f, 0.35f,  1.3f  },  // front left
+            { -0.62f, 0.35f,  1.3f  },  // front right
+            {  0.62f, 0.35f, -1.15f },  // back left
+            { -0.62f, 0.35f, -1.15f },  // back right
+        };
+
+        for (float[] pos : wheelPositions) {
+            Wheel wheel = new Wheel();
+            wheel.setParent(this);
+            wheel.getMatrix().translate(pos[0], pos[1], pos[2]);
+           
+            if (pos[0] > 0) {
+                wheel.getMatrix().rotateY((float) Math.PI);   // 180 degrees
+            }
+        }
+        
     }
 
     @Override
