@@ -76,7 +76,10 @@ public class Assignment3 implements IWindowListener {
 		// Enable depth testing so closer objects appear in front
 		glEnable(GL_DEPTH_TEST);
 
-		new TextureLibrary(new File("src/comp3170/ass3/textures")); //finding texture library for sand
+		new TextureLibrary(new File[] {
+			new File("src/comp3170/ass3/textures"),
+			new File("src/comp3170/ass3/textures/skies"),
+		});
 		new ShaderLibrary(new File("src/comp3170/ass3/shaders"));   //finding shaders for objects
 
 		scene = new Scene();
