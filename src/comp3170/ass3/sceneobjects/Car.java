@@ -174,7 +174,7 @@ public class Car extends SceneObject {
     }
 
     @Override
-    protected void drawSelf(Matrix4f mvpMatrix) {
+    protected void drawSelf(Matrix4f mvpMatrix, int pass) {
         shader.enable();
         shader.setUniform("u_mvpMatrix", mvpMatrix);
 
@@ -182,13 +182,22 @@ public class Car extends SceneObject {
         glBindTexture(GL_TEXTURE_2D, texture);
         shader.setUniform("u_texture", 0);
 
-        // draw each submesh
-        for (int i = 0; i < SUBMESHES.length; i++) {
-            shader.setAttribute("a_position", vertexBuffers[i]);
-            shader.setAttribute("a_uv", uvBuffers[i]);
-            
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffers[i]);
-            glDrawElements(GL_TRIANGLES, indexCounts[i], GL_UNSIGNED_INT, 0);
+        if (pass == 0) {
+            // OPAQUE PASS: Body (0) and Interior (1)
+            shader.setUniform("u_alpha", 1.0f);
+            drawSubmesh(0);
+            drawSubmesh(1);
+        } else if (pass == 1) {
+            // TRANSPARENT PASS: Windows (2)
+            shader.setUniform("u_alpha", 0.2f);
+            drawSubmesh(2);
         }
+    }
+
+    private void drawSubmesh(int i) {
+        shader.setAttribute("a_position", vertexBuffers[i]);
+        shader.setAttribute("a_uv", uvBuffers[i]);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffers[i]);
+        glDrawElements(GL_TRIANGLES, indexCounts[i], GL_UNSIGNED_INT, 0);
     }
 }

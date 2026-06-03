@@ -91,6 +91,7 @@ public class Wheel extends SceneObject {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
         shader.setUniform("u_texture", 0);
+        shader.setUniform("u_alpha", 1.0f); 
 
         shader.setAttribute("a_position", vertexBuffer);
         shader.setAttribute("a_uv", uvBuffer);

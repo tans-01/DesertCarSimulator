@@ -120,7 +120,18 @@ public class Assignment3 implements IWindowListener {
         // Desert has no model transform so model = identity
         mvpMatrix.set(projMatrix).mul(viewMatrix);
 
-        scene.draw(mvpMatrix);
+        // PASS 0: opaque geometry
+        scene.draw(mvpMatrix, 0);
+
+        // PASS 1: transparent geometry (windows)
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDepthMask(false);
+
+        scene.draw(mvpMatrix, 1);
+
+        glDepthMask(true);
+        glDisable(GL_BLEND);
 	}
 
 	@Override

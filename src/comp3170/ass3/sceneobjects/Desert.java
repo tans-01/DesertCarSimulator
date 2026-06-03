@@ -82,6 +82,7 @@ public class Desert extends SceneObject {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
         shader.setUniform("u_texture", 0);
+        shader.setUniform("u_alpha", 1.0f); 
         
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
         glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
