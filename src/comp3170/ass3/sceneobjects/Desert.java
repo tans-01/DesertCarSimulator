@@ -1,13 +1,17 @@
 package comp3170.ass3.sceneobjects;
 
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC2;   // for the UV buffer
 import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC3;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.joml.Matrix4f;
@@ -16,26 +20,9 @@ import comp3170.GLBuffers;
 import comp3170.OpenGLException;
 import comp3170.SceneObject;
 import comp3170.Shader;
-
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13.glActiveTexture;
-import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC2;   // for the UV buffer
-import comp3170.TextureLibrary;
-
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T; // this is for the repeating texture of the sand.
-import static org.lwjgl.opengl.GL11.GL_REPEAT;
-import static org.lwjgl.opengl.GL11.glTexParameteri;
-
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER; //mipmaps
-import static org.lwjgl.opengl.GL11.GL_LINEAR;
-import static org.lwjgl.opengl.GL30.GL_LINEAR_MIPMAP_LINEAR;
-import static org.lwjgl.opengl.GL30.glGenerateMipmap;
-
 import comp3170.ShaderLibrary;
+import comp3170.TextureLibrary;
+import comp3170.ass3.TextureUtils;
 
 public class Desert extends SceneObject {
 
@@ -55,18 +42,7 @@ public class Desert extends SceneObject {
     public Desert() throws IOException, OpenGLException {
     	shader = ShaderLibrary.instance.compileShader(VERT_SHADER, FRAG_SHADER);
         texture = TextureLibrary.instance.loadTexture(TEXTURE);
-        
-      //binding the texture first.
-        glBindTexture(GL_TEXTURE_2D, texture);
-      // wrap modes (tiling)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-      // trilinear filtering
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        
-     // build mipmaps
-        glGenerateMipmap(GL_TEXTURE_2D);
+        TextureUtils.setupTexture(texture);
         
         float h = SIZE / 2f; // 50
         float[] vertices = {
