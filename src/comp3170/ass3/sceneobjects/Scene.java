@@ -1,5 +1,6 @@
 package comp3170.ass3.sceneobjects;
 
+import comp3170.InputManager;
 import comp3170.OpenGLException;
 import comp3170.SceneObject;
 import comp3170.ShaderLibrary;
@@ -24,6 +25,10 @@ public class Scene extends SceneObject {
 		} catch (IOException | OpenGLException e) {
 			throw new RuntimeException(e);
 		}
+		
+	}
+	public void update(InputManager input, float deltaTime) {
+	    car.update(input, deltaTime);
 	}
 	
 }

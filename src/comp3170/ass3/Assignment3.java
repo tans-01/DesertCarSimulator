@@ -59,6 +59,8 @@ public class Assignment3 implements IWindowListener {
 	private Matrix4f viewMatrix = new Matrix4f();
 	private Matrix4f projMatrix = new Matrix4f();
 	private Matrix4f mvpMatrix = new Matrix4f();
+	private InputManager input;
+	private long oldTime;
 
 	public Assignment3() throws OpenGLException {
 		window = new Window("Assignment 3", screenWidth, screenHeight, this);
@@ -78,10 +80,21 @@ public class Assignment3 implements IWindowListener {
 		new ShaderLibrary(new File("src/comp3170/ass3/shaders"));   //finding shaders for objects
 
 		scene = new Scene();
+		input = new InputManager(window);
+		oldTime = System.currentTimeMillis();
 	}
-	
+	private void update() {
+	    long time = System.currentTimeMillis();
+	    float deltaTime = (time - oldTime) / 1000f;
+	    oldTime = time;
+
+	    scene.update(input, deltaTime);
+
+	    input.clear();
+	}
 	@Override
 	public void draw() {
+		update();
 		// Clear screen
         glClearColor(0.5f, 0.8f, 1.0f, 1.0f); // light blue sky
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
