@@ -78,7 +78,7 @@ public class Desert extends SceneObject {
         shader.setAttribute("a_uv", uvBuffer);
         shader.setUniform("u_mvpMatrix", mvpMatrix);
         
-     // bind the texture to texture unit 0
+        // bind the texture to texture unit 0
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
         shader.setUniform("u_texture", 0);
