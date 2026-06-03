@@ -99,8 +99,8 @@ public class Assignment3 implements IWindowListener {
 
         // Simple camera looking down at the desert from above and to the side
         viewMatrix.setLookAt(
-            0, 50, 80,   // camera position (x, y, z)
-            0, 0, 0,     // look at origin
+        	3, 2, 4,   // camera position (x, y, z)
+            0, 1, 0,     // look at origin
             0, 1, 0      // up direction
         );
 

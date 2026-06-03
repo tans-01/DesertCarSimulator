@@ -48,8 +48,8 @@ public class Desert extends SceneObject {
         float[] vertices = {
             -h, 0, -h, 1,   // back left
              h, 0, -h, 1,  // back right
-             h, 0,  h, 1,  // front right
-            -h, 0,  h, 1,  // front left
+             h, 0,  h, 1,  // front right  (its vec4 because it needs to go with the shader which also
+            -h, 0,  h, 1,  // front left	( being used for car which is vec4)
         };
         
         float[] uvs = {    // i have set this a float you can also keep this a vector but

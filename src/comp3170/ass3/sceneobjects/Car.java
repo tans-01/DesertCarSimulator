@@ -79,6 +79,9 @@ public class Car extends SceneObject {
 		indexCounts   = [Body count, Interior count, Windows count]
         *
         */
+     // Flip from US (left-hand drive) to Australian (right-hand drive) layout
+        getMatrix().scale(-1, 1, 1);
+
     }
 
     @Override
@@ -94,7 +97,7 @@ public class Car extends SceneObject {
         for (int i = 0; i < SUBMESHES.length; i++) {
             shader.setAttribute("a_position", vertexBuffers[i]);
             shader.setAttribute("a_uv", uvBuffers[i]);
-
+            
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffers[i]);
             glDrawElements(GL_TRIANGLES, indexCounts[i], GL_UNSIGNED_INT, 0);
         }
