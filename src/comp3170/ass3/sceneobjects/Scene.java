@@ -6,9 +6,12 @@ import comp3170.SceneObject;
 
 import java.io.IOException;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_3;
+
 public class Scene extends SceneObject {
 
 	public static Scene theScene = null;
+	public boolean daytime = true;
 	private Skybox skybox;
 	private Desert desert;
 	private Car car;
@@ -28,8 +31,17 @@ public class Scene extends SceneObject {
 		}
 		
 	}
+
 	public void update(InputManager input, float deltaTime) {
+//		if (input.wasKeyPressed(GLFW_KEY_1)) {
+//			activeCamera = mapCamera;
+//		}
+//		if (input.wasKeyPressed(GLFW_KEY_2)) {
+//			activeCamera = thirdPersonCamera;
+//		}
+		if (input.wasKeyPressed(GLFW_KEY_3)) {
+			daytime = !daytime;
+		}
 	    car.update(input, deltaTime);
 	}
-	
 }
