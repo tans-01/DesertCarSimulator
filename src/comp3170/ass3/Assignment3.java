@@ -1,6 +1,7 @@
 package comp3170.ass3;
 
 import comp3170.*;
+import comp3170.ass3.sceneobjects.RenderTextureQuad;
 import comp3170.ass3.sceneobjects.Scene;
 import org.joml.Matrix4f;
 
@@ -8,6 +9,8 @@ import java.io.File;
 import java.lang.Math;
 import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE; 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
+import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 
 /**
  * COMP3170 Assignment 3 - 3D desert car simulator
@@ -55,6 +58,8 @@ public class Assignment3 implements IWindowListener {
 
 	private Scene scene;
 
+	private RenderTextureQuad renderTextureQuad;
+
 	// Camera
 	private Matrix4f viewMatrix = new Matrix4f();
 	private Matrix4f projMatrix = new Matrix4f();
@@ -85,6 +90,7 @@ public class Assignment3 implements IWindowListener {
 		new ShaderLibrary(new File("src/comp3170/ass3/shaders"));   //finding shaders for objects
 
 		scene = new Scene();
+		renderTextureQuad = new RenderTextureQuad(screenWidth, screenHeight);
 		input = new InputManager(window);
 		oldTime = System.currentTimeMillis();
 	}
@@ -94,12 +100,24 @@ public class Assignment3 implements IWindowListener {
 	    oldTime = time;
 
 	    scene.update(input, deltaTime);
+		renderTextureQuad.update(deltaTime);
 
 	    input.clear();
 	}
 	@Override
 	public void draw() {
 		update();
+
+		var isScreenSpaceEffectEnabled = Scene.theScene.daytime;
+		if (isScreenSpaceEffectEnabled) {
+			// Pass 1: render the scene to a texture
+			int frameBuffer = renderTextureQuad.getFrameBuffer();
+			glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+		} else {
+			// render to screen
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
+
 		// Clear screen
         glClearColor(0.5f, 0.8f, 1.0f, 1.0f); // light blue sky
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -134,6 +152,20 @@ public class Assignment3 implements IWindowListener {
 
         glDepthMask(true);
         glDisable(GL_BLEND);
+		if (isScreenSpaceEffectEnabled) {
+			// Pass 2: render the texture to a quad (with a filter)
+			// no camera is required, as the quad is drawn in NDC
+
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+			glClear(GL_COLOR_BUFFER_BIT);
+			glViewport(0, 0, screenWidth, screenHeight);
+
+			glClearDepth(1f);
+			glClear(GL_DEPTH_BUFFER_BIT);
+
+			renderTextureQuad.draw();
+		}
 	}
 
 	@Override
