@@ -6,7 +6,7 @@ import org.joml.Matrix4f;
 
 import java.io.File;
 import java.lang.Math;
-
+import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE; 
 import static org.lwjgl.opengl.GL11.*;
 
 /**
@@ -64,6 +64,7 @@ public class Assignment3 implements IWindowListener {
 
 	public Assignment3() throws OpenGLException {
 		window = new Window("Assignment 3", screenWidth, screenHeight, this);
+		window.setSamples(4); //MSAA 4x
 		window.run();
 	}
 
@@ -75,6 +76,7 @@ public class Assignment3 implements IWindowListener {
 	public void init() {
 		// Enable depth testing so closer objects appear in front
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_MULTISAMPLE);
 
 		new TextureLibrary(new File[] {
 			new File("src/comp3170/ass3/textures"),
