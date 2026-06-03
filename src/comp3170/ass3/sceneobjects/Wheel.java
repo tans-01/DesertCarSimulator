@@ -74,13 +74,16 @@ public class Wheel extends SceneObject {
         Matrix4f matrix = getMatrix();
         matrix.identity();                  // rebuild fresh each frame
         matrix.translate(position);         // place at corner
+        var spinAngleToRotateBy = spinAngle;
         if (flipped) {
             matrix.rotateY((float) Math.PI); // hubcap faces out
+            // Need to flip the angle as we've rotated 180 degrees
+            spinAngleToRotateBy *= -1;
         }
         if (isFront) {
             matrix.rotateY(steerAngle);     // front wheels steer
         }
-        matrix.rotateX(spinAngle);          // all wheels spin around axle
+        matrix.rotateX(spinAngleToRotateBy);          // all wheels spin around axle
     }
     
     @Override
