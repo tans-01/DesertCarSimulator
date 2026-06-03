@@ -3,6 +3,7 @@ import comp3170.ShaderLibrary;
 import comp3170.IWindowListener;
 import comp3170.OpenGLException;
 import comp3170.Window;
+import comp3170.ass3.sceneobjects.Car;
 import comp3170.ass3.sceneobjects.Desert;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -56,7 +57,8 @@ public class Assignment3 implements IWindowListener {
 	private int screenHeight = 1000;
 
 	 private Desert desert;
-
+	 private Car car;
+	 
 	    // Camera
 	    private Matrix4f viewMatrix = new Matrix4f();
 	    private Matrix4f projMatrix = new Matrix4f();
@@ -79,6 +81,7 @@ public class Assignment3 implements IWindowListener {
 
 		 try {
 	            desert = new Desert();
+	            car = new Car();
 	        } catch (IOException | OpenGLException e) {
 	            e.printStackTrace();
 	        }
@@ -113,6 +116,8 @@ public class Assignment3 implements IWindowListener {
         mvpMatrix.set(projMatrix).mul(viewMatrix);
 
         desert.draw(mvpMatrix);
+        car.draw(mvpMatrix);
+
 	}
 
 	@Override

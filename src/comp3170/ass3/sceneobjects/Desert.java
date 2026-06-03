@@ -10,7 +10,7 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC2;   // for the UV buffer
-import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC3;
+import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC4;
 
 import java.io.IOException;
 
@@ -46,10 +46,10 @@ public class Desert extends SceneObject {
         
         float h = SIZE / 2f; // 50
         float[] vertices = {
-            -h, 0, -h,   // back left
-             h, 0, -h,   // back right
-             h, 0,  h,   // front right
-            -h, 0,  h,   // front left
+            -h, 0, -h, 1,   // back left
+             h, 0, -h, 1,  // back right
+             h, 0,  h, 1,  // front right
+            -h, 0,  h, 1,  // front left
         };
         
         float[] uvs = {    // i have set this a float you can also keep this a vector but
@@ -64,7 +64,7 @@ public class Desert extends SceneObject {
             0, 2, 3,
         };
 
-        vertexBuffer = GLBuffers.createBuffer(vertices, GL_FLOAT_VEC3);
+        vertexBuffer = GLBuffers.createBuffer(vertices, GL_FLOAT_VEC4);
         uvBuffer = GLBuffers.createBuffer(uvs, GL_FLOAT_VEC2);
         indexBuffer = GLBuffers.createIndexBuffer(indices);
         indexCount = indices.length;
