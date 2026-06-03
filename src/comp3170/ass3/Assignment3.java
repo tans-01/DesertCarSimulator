@@ -1,17 +1,14 @@
 package comp3170.ass3;
-import comp3170.ShaderLibrary;
-import comp3170.IWindowListener;
-import comp3170.OpenGLException;
-import comp3170.Window;
-import comp3170.ass3.sceneobjects.Car;
-import comp3170.ass3.sceneobjects.Desert;
+
+import comp3170.*;
+import comp3170.ass3.sceneobjects.Scene;
+import org.joml.Matrix4f;
+
+import java.io.File;
+import java.lang.Math;
+
 import static org.lwjgl.opengl.GL11.*;
 
-import java.io.IOException;
-
-import org.joml.Matrix4f;
-import java.io.File;
-import comp3170.TextureLibrary;
 /**
  * COMP3170 Assignment 3 - 3D desert car simulator
  * Created by Cadigal (47100192) and Tanish (47896345)
@@ -56,15 +53,13 @@ public class Assignment3 implements IWindowListener {
 	private int screenWidth = 1000;
 	private int screenHeight = 1000;
 
-	 private Desert desert;
-	 private Car car;
-	 
-	    // Camera
-	    private Matrix4f viewMatrix = new Matrix4f();
-	    private Matrix4f projMatrix = new Matrix4f();
-	    private Matrix4f mvpMatrix = new Matrix4f();
+	private Scene scene;
 
-	
+	// Camera
+	private Matrix4f viewMatrix = new Matrix4f();
+	private Matrix4f projMatrix = new Matrix4f();
+	private Matrix4f mvpMatrix = new Matrix4f();
+
 	public Assignment3() throws OpenGLException {
 		window = new Window("Assignment 3", screenWidth, screenHeight, this);
 		window.run();
@@ -76,21 +71,15 @@ public class Assignment3 implements IWindowListener {
 
 	@Override
 	public void init() {
+		// Enable depth testing so closer objects appear in front
+		glEnable(GL_DEPTH_TEST);
+
 		new TextureLibrary(new File("src/comp3170/ass3/textures")); //finding texture library for sand
 		new ShaderLibrary(new File("src/comp3170/ass3/shaders"));   //finding shaders for objects
 
-		 try {
-	            desert = new Desert();
-	            car = new Car();
-	        } catch (IOException | OpenGLException e) {
-	            e.printStackTrace();
-	        }
-
-	        // Enable depth testing so closer objects appear in front
-	        glEnable(GL_DEPTH_TEST);
-	    }
+		scene = new Scene();
+	}
 	
-
 	@Override
 	public void draw() {
 		// Clear screen
@@ -115,15 +104,13 @@ public class Assignment3 implements IWindowListener {
         // Desert has no model transform so model = identity
         mvpMatrix.set(projMatrix).mul(viewMatrix);
 
-        desert.draw(mvpMatrix);
-        car.draw(mvpMatrix);
-
+        scene.draw(mvpMatrix);
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		 screenWidth = width;
-	        screenHeight = height;
+		screenWidth = width;
+		screenHeight = height;
 	}
 
 	@Override
