@@ -1,6 +1,7 @@
 package comp3170.ass3.sceneobjects;
 
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glDrawElements;
@@ -25,13 +26,20 @@ import comp3170.ass3.TextureUtils;
 import comp3170.ass3.models.Mesh;
 import comp3170.ass3.models.ObjData;
 
+import comp3170.InputManager;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 public class Car extends SceneObject {
 
     private static final String VERT_SHADER = "simple.vert";
     private static final String FRAG_SHADER = "simple.frag";
     private static final String TEXTURE = "car.png";
     private static final String OBJ_FILE = "src/comp3170/ass3/models/car.obj";
-
+    private static final float MOVE_SPEED = 10f;             // metres per second
+    private static final float TURN_SPEED = (float) Math.toRadians(90); // radians per second
+    
     // the three submeshes in the car OBJ
     private static final String[] SUBMESHES = { "Body", "Interior", "Windows" };
 
@@ -100,6 +108,24 @@ public class Car extends SceneObject {
             }
         }
         
+    }
+    
+    public void update(InputManager input, float deltaTime) {
+        // forward and backward moving
+        if (input.isKeyDown(GLFW_KEY_W)) {
+            getMatrix().translate(0, 0, MOVE_SPEED * deltaTime); //forward
+        }
+        if (input.isKeyDown(GLFW_KEY_S)) {
+            getMatrix().translate(0, 0, -MOVE_SPEED * deltaTime); //backward
+        }
+
+        // turn left/right
+        if (input.isKeyDown(GLFW_KEY_A)) {
+            getMatrix().rotateY(-TURN_SPEED * deltaTime); //left
+        }
+        if (input.isKeyDown(GLFW_KEY_D)) {
+            getMatrix().rotateY(TURN_SPEED * deltaTime); //right
+        }
     }
 
     @Override
