@@ -35,10 +35,12 @@ import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL30.GL_LINEAR_MIPMAP_LINEAR;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
+import comp3170.ShaderLibrary;
+
 public class Desert extends SceneObject {
 
-    private static final String VERT_SHADER = "src/comp3170/ass3/shaders/simple.vert";
-    private static final String FRAG_SHADER = "src/comp3170/ass3/shaders/simple.frag";
+    private static final String VERT_SHADER = "simple.vert";
+    private static final String FRAG_SHADER = "simple.frag";
     private static final String TEXTURE = "sand.jpg";
     
     private static final float SIZE = 100f; // 100x100 meters
@@ -51,7 +53,7 @@ public class Desert extends SceneObject {
     private int texture;
 
     public Desert() throws IOException, OpenGLException {
-        shader = new Shader(new File(VERT_SHADER), new File(FRAG_SHADER));
+    	shader = ShaderLibrary.instance.compileShader(VERT_SHADER, FRAG_SHADER);
         texture = TextureLibrary.instance.loadTexture(TEXTURE);
         
       //binding the texture first.

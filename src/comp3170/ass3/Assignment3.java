@@ -1,5 +1,5 @@
 package comp3170.ass3;
-
+import comp3170.ShaderLibrary;
 import comp3170.IWindowListener;
 import comp3170.OpenGLException;
 import comp3170.Window;
@@ -75,6 +75,8 @@ public class Assignment3 implements IWindowListener {
 	@Override
 	public void init() {
 		new TextureLibrary(new File("src/comp3170/ass3/textures")); //finding texture library for sand
+		new ShaderLibrary(new File("src/comp3170/ass3/shaders"));   //finding shaders for objects
+
 		 try {
 	            desert = new Desert();
 	        } catch (IOException | OpenGLException e) {
