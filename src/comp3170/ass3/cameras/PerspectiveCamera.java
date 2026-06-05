@@ -4,26 +4,35 @@ import comp3170.InputManager;
 import comp3170.SceneObject;
 import comp3170.ass3.sceneobjects.Scene;
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import org.joml.Vector4f;
 
 import static comp3170.Math.TAU;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 
 public class PerspectiveCamera extends SceneObject implements Camera {
 
 	private static final float ASPECT = 1;
 	private static final float FOVY = TAU / 6;
-	private static final float NEAR = 0.1f;
-	private static final float FAR = 500f;
 	private static final float HEIGHT = 2f;
-	final static float ROTATION_SPEED = TAU / 4;
-	Vector2f tiltYawAngleRadians = new Vector2f(
-		// Look slightly down initially
-		-(float)Math.PI / 10,
-		0
-	);
+	static final float PITCH_SPEED = TAU / 4;
+	static final float ROTATION_SPEED = TAU / 4;
+	static final float DOLLY_SPEED = 1f;
+	static final float FOV_ZOOM_SPEED = 1f;
+	static final float MIN_PITCH = -TAU / 4;
+	static final float MAX_PITCH = TAU / 4;
+	static final float MIN_DOLLY = 1;
+	static final float MAX_DOLLY = 20;
+	// 5º
+	static final float MIN_FOV_ZOOM = TAU / 72;
+	// A fov zoom bigger than TAU / 2, flips the image, TAU / 3 is a healthy margin away from this
+	static final float MAX_FOV_ZOOM = TAU / 3;
+	// Look slightly down initially
+	float pitchRadians = -(float)TAU / 20;
+	float rotationRadians = 0;
+	// 10m away initially
+	float dollyMeters = 10;
+	// 90º initially
+	float fovZoom = TAU / 6;
 
 	public Matrix4f cameraMatrix = new Matrix4f();
 	
@@ -43,7 +52,7 @@ public class PerspectiveCamera extends SceneObject implements Camera {
 
 	@Override
 	public Matrix4f getProjectionMatrix(Matrix4f dest) {
-		return dest.setPerspective(FOVY, ASPECT, NEAR, FAR);
+		return dest.setPerspective(fovZoom, ASPECT, NEAR, FAR);
 	}
 	
 	@Override
@@ -55,21 +64,33 @@ public class PerspectiveCamera extends SceneObject implements Camera {
 
 	public void update(InputManager input, float deltaTime) {
 		if (input.isKeyDown(GLFW_KEY_UP)) {
-			tiltYawAngleRadians.x += ROTATION_SPEED * deltaTime;
+			pitchRadians = Math.min(MAX_PITCH, pitchRadians + PITCH_SPEED * deltaTime);
 		}
 		if (input.isKeyDown(GLFW_KEY_DOWN)) {
-			tiltYawAngleRadians.x -= ROTATION_SPEED * deltaTime;
+			pitchRadians = Math.max(MIN_PITCH, pitchRadians - PITCH_SPEED * deltaTime);
 		}
 		if (input.isKeyDown(GLFW_KEY_LEFT)) {
-			tiltYawAngleRadians.y += ROTATION_SPEED * deltaTime;
+			rotationRadians += ROTATION_SPEED * deltaTime;
 		}
 		if (input.isKeyDown(GLFW_KEY_RIGHT)) {
-			tiltYawAngleRadians.y -= ROTATION_SPEED * deltaTime;
+			rotationRadians -= ROTATION_SPEED * deltaTime;
+		}
+		if (input.isKeyDown(GLFW_KEY_COMMA)) {
+			dollyMeters = Math.min(MAX_DOLLY, dollyMeters + DOLLY_SPEED * deltaTime);
+		}
+		if (input.isKeyDown(GLFW_KEY_PERIOD)) {
+			dollyMeters = Math.max(MIN_DOLLY, dollyMeters - DOLLY_SPEED * deltaTime);
+		}
+		if (input.isKeyDown(GLFW_KEY_PAGE_UP)) {
+			fovZoom = Math.min(MAX_FOV_ZOOM, fovZoom + FOV_ZOOM_SPEED * deltaTime);
+		}
+		if (input.isKeyDown(GLFW_KEY_PAGE_DOWN)) {
+			fovZoom = Math.max(MIN_FOV_ZOOM, fovZoom - FOV_ZOOM_SPEED * deltaTime);
 		}
 
 		cameraMatrix.set(Scene.theScene.getCar().getMatrix());
-		cameraMatrix.translate(0, 5, 10); // up + back
-		cameraMatrix.rotateY(tiltYawAngleRadians.y);
-		cameraMatrix.rotateX(tiltYawAngleRadians.x);
+		cameraMatrix.rotateY(rotationRadians);
+		cameraMatrix.translate(0, 5, dollyMeters); // up + back
+		cameraMatrix.rotateX(pitchRadians);
 	}
 }

@@ -13,15 +13,13 @@ public class OrthographicCamera extends SceneObject implements Camera {
 
 	private static final float WIDTH = 100;
 	private static final float HEIGHT = 100;
-	private static final float NEAR = 0.1f;
-	private static final float FAR = 10f;
-	private static final float ELEVATION = 10f;
-	private static final float DISTANCE = 10f;
+	private static final float ELEVATION = 5;
+	private static final float DISTANCE = 5;
 
 	final static float ROTATION_SPEED = TAU / 4;
-	private Vector3f angle = new Vector3f(0, 0, 0);
+	final Vector3f angle = new Vector3f(-TAU/4, 0, 0);
 
-	private Matrix4f cameraMatrix = new Matrix4f();
+	final Matrix4f cameraMatrix = new Matrix4f();
 
 	public OrthographicCamera() {
 	}

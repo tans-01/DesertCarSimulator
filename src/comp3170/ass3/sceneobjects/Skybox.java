@@ -1,6 +1,7 @@
 package comp3170.ass3.sceneobjects;
 
 import comp3170.*;
+import comp3170.ass3.cameras.PerspectiveCamera;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
@@ -130,8 +131,12 @@ public class Skybox extends SceneObject {
 
 	@Override
 	protected void drawSelf(Matrix4f mvpMatrixIgnored) {
+		if (!(Scene.theScene.getCamera() instanceof PerspectiveCamera)) {
+			// No skybox in map view
+			return;
+		}
 		// draw the skybox without view translation,
-		// so it is always centred on the camera
+		// so it is always centred on the perspective camera
 		Scene.theScene.getCamera().getViewMatrix(viewMatrix);
 		viewMatrix.setTranslation(0, 0, 0);
 		Scene.theScene.getCamera().getProjectionMatrix(projectionMatrix);
@@ -142,11 +147,6 @@ public class Skybox extends SceneObject {
 		shader.setUniform("u_mvpMatrix", mvpMatrix);
 
 		glDepthMask(false);
-
-		// TODO: Need camera
-//		var camera = Scene.theScene.getCamera();
-//		shader.setUniform("u_cameraMatrix", camera.getCameraMatrix(cameraMatrix));
-		shader.setUniform("u_cameraMatrix", mvpMatrix);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, Scene.theScene.daytime ? dayTexture : nightTexture);
