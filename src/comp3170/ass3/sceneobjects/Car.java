@@ -94,10 +94,8 @@ public class Car extends SceneObject {
 		indexCounts   = [Body count, Interior count, Windows count]
         *
         */
-     // Flip from US (left-hand drive) to Australian (right-hand drive) layout
-        getMatrix().scale(-1, 1, 1);
 
-     // four wheels attached to the car as its children
+        // four wheels attached to the car as its children
         float[][] wheelPositions = {
             {  0.62f, 0.35f,  1.3f  },  // front left
             { -0.62f, 0.35f,  1.3f  },  // front right
@@ -112,7 +110,6 @@ public class Car extends SceneObject {
             Wheel wheel = new Wheel(new Vector3f(pos[0], pos[1], pos[2]), isFront, flipped);
             wheel.setParent(this);
             wheels[i] = wheel; 
-            
         }
     }
     
@@ -138,7 +135,7 @@ public class Car extends SceneObject {
         if (velocity < -MAX_SPEED) velocity = -MAX_SPEED;
 
         float moveDistance = velocity * deltaTime;
-        getMatrix().translate(0, 0, moveDistance);
+        getMatrix().translate(0, 0, -moveDistance);
 
         // Steering:
         // turn RATE scales with speed (no car rotation when stationary)
@@ -146,11 +143,11 @@ public class Car extends SceneObject {
         float speedFactor = velocity / MAX_SPEED;   // -1..1, 0 when stopped
 
         if (input.isKeyDown(GLFW_KEY_A)) {
-            getMatrix().rotateY(-TURN_SPEED * deltaTime * speedFactor);
+            getMatrix().rotateY(TURN_SPEED * deltaTime * speedFactor);
             steerAngle = -MAX_STEER;
         }
         if (input.isKeyDown(GLFW_KEY_D)) {
-            getMatrix().rotateY(TURN_SPEED * deltaTime * speedFactor);
+            getMatrix().rotateY(-TURN_SPEED * deltaTime * speedFactor);
             steerAngle = MAX_STEER;
         }
 
@@ -175,6 +172,11 @@ public class Car extends SceneObject {
 
     @Override
     protected void drawSelf(Matrix4f mvpMatrix, int pass) {
+        // Flip from US (left-hand drive) to Australian (right-hand drive) layout
+        mvpMatrix.scale(-1, 1, 1);
+        // Fix model pointing backwards
+        mvpMatrix.rotateY((float) Math.TAU / 2);
+
         shader.enable();
         shader.setUniform("u_mvpMatrix", mvpMatrix);
 

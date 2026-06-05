@@ -6,9 +6,9 @@ import comp3170.ass3.sceneobjects.Scene;
 import org.joml.Matrix4f;
 
 import java.io.File;
-import java.lang.Math;
-import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE; 
+
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 
@@ -59,13 +59,13 @@ public class Assignment3 implements IWindowListener {
 	private Scene scene;
 
 	private RenderTextureQuad renderTextureQuad;
+	private InputManager input;
+	private long oldTime;
 
 	// Camera
 	private Matrix4f viewMatrix = new Matrix4f();
 	private Matrix4f projMatrix = new Matrix4f();
 	private Matrix4f mvpMatrix = new Matrix4f();
-	private InputManager input;
-	private long oldTime;
 
 	public Assignment3() throws OpenGLException {
 		window = new Window("Assignment 3", screenWidth, screenHeight, this);
@@ -94,6 +94,7 @@ public class Assignment3 implements IWindowListener {
 		input = new InputManager(window);
 		oldTime = System.currentTimeMillis();
 	}
+
 	private void update() {
 	    long time = System.currentTimeMillis();
 	    float deltaTime = (time - oldTime) / 1000f;
@@ -104,6 +105,7 @@ public class Assignment3 implements IWindowListener {
 
 	    input.clear();
 	}
+
 	@Override
 	public void draw() {
 		update();
@@ -119,26 +121,13 @@ public class Assignment3 implements IWindowListener {
 		}
 
 		// Clear screen
-        glClearColor(0.5f, 0.8f, 1.0f, 1.0f); // light blue sky
+        glClearColor(0, 0, 0, 0); // light blue sky
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Simple camera looking down at the desert from above and to the side
-        viewMatrix.setLookAt(
-        	3, 2, 4,   // camera position (x, y, z)
-            0, 1, 0,     // look at origin
-            0, 1, 0      // up direction
-        );
-
-        projMatrix.setPerspective(
-            (float) Math.toRadians(60),          // field of view
-            (float) screenWidth / screenHeight,  // aspect ratio
-            0.1f,                                // near plane
-            500f                                 // far plane
-        );
-
-        // MVP = projection * view * model
-        // Desert has no model transform so model = identity
-        mvpMatrix.set(projMatrix).mul(viewMatrix);
+		var camera = scene.getCamera();
+		camera.getViewMatrix(viewMatrix);
+		camera.getProjectionMatrix(projMatrix);
+		mvpMatrix.set(projMatrix).mul(viewMatrix);
 
         // PASS 0: opaque geometry
         scene.draw(mvpMatrix, 0);

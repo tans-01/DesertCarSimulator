@@ -122,14 +122,24 @@ public class Skybox extends SceneObject {
 		}		
 	}
 
-	private Matrix4f cameraMatrix = new Matrix4f();
-	
+	final Matrix4f cameraMatrix = new Matrix4f();
+	final Matrix4f viewMatrix = new Matrix4f();
+	final Matrix4f projectionMatrix = new Matrix4f();
+	final Matrix4f mvpMatrix = new Matrix4f();
+	final Vector4f origin = new Vector4f(0,0,0,1);
+
 	@Override
-	protected void drawSelf(Matrix4f mvpMatrix) {
+	protected void drawSelf(Matrix4f mvpMatrixIgnored) {
+		// draw the skybox without view translation,
+		// so it is always centred on the camera
+		Scene.theScene.getCamera().getViewMatrix(viewMatrix);
+		viewMatrix.setTranslation(0, 0, 0);
+		Scene.theScene.getCamera().getProjectionMatrix(projectionMatrix);
+		projectionMatrix.mul(viewMatrix, mvpMatrix);
+
 		shader.enable();
 		shader.setAttribute("a_position", vertexBuffer);
-		// TODO: Remove 20x scale
-		shader.setUniform("u_mvpMatrix", mvpMatrix.scale(20));
+		shader.setUniform("u_mvpMatrix", mvpMatrix);
 
 		glDepthMask(false);
 
