@@ -7,6 +7,21 @@
 ### Student 2 ID: [Your ID here]
 
 ## Your Development Environment
+### Cadigal (47100192)
+
+| Spec                                                | Answer                                                                  |
+|-----------------------------------------------------|-------------------------------------------------------------------------|
+| Java JDK version used for compilation               | Amazon Corretto 21.0.3 AArch64                                          |
+| Java compiler compliance level used for compilation | 21 - Record patterns, pattern matching for switch                       |
+| Java JRE version used for execution                 | Same as JDK                                                             |
+| Eclipse version                                     | N/A, IntelliJ IDEA 2024.2.4 (Community Edition) Build #IC-242.23726.103 |
+| Your screen dimensions (width x height)             | 2560x1600 13.3 inch Retina display (4 sub pixels per pixel)             |
+| Your computer type (Mac/PC)                         | MacBook Air                                                             |
+| Your computer make and model                        | M1, 2020, 16GB                                                          |
+| Your computer Operating System and version          | OSX Tahoe 26.1 (25B78)                                                  |
+
+### Tanish (47896345)
+
 |Spec|Answer|
 |----|-----|
 |Java JDK version used for compilation|-|
@@ -21,36 +36,36 @@
 ## Features Attempted
 Complete the table below indicating the features you have attempted. This will be used as a guide by your marker for what elements to look for, and dictate your <b>Completeness</b> mark.
 
-| Feature                               | Attempted | 
-| ------------------------------------- | --------- |
-| Debug modes                           |          | 
-| - Wireframe mode                      | YES / NO |
-| -  Normals mode                       | YES / NO |
-| Desert                                |          |
-| - Mesh & normals                      | YES / NO |
-| - UVs & texture                       | YES / NO |
-| Road	                                |          |
-| - Mesh & normals                      | YES / NO |
-| - Bezier mesh (*Challenge*)           | YES / NO |
-| - UVs & texturing                     | YES / NO |
-| Trees                                 | YES / NO |
-| Car                                   |          |
-| - Meshes & normals                    | YES / NO |
-| - UVs & Textures                      | YES / NO |
-| - Window Transparency                 | YES / NO |
-| - Driving                             | YES / NO |
-| - Wheels                              | YES / NO |
-| - Animating wheels	                | YES / NO |
-| Cameras                               |          |
-| - Map                                 | YES / NO |
-| - Third-person                        | YES / NO |
-| Light                                 |          |
-| - Day – Sun (diffuse & ambient)       | YES / NO |
-| - Day – Sun (specular)                | YES / NO |
-| - Night – Headlights (point)          | YES / NO |
-| - Night – Headlight cone	            | YES / NO |
-| Skybox                                | YES / NO |
-| Effects- Heat shimmer (*Challenge*)   | YES / NO |
+| Feature                             | Attempted | 
+|-------------------------------------|-----------|
+| Debug modes                         |           | 
+| - Wireframe mode                    | YES       |
+| -  Normals mode                     | YES       |
+| Desert                              |           |
+| - Mesh & normals                    | YES       |
+| - UVs & texture                     | YES       |
+| Road                                |           |
+| - Mesh & normals                    | YES / NO  |
+| - Bezier mesh (*Challenge*)         | YES / NO  |
+| - UVs & texturing                   | YES / NO  |
+| Trees                               | YES / NO  |
+| Car                                 |           |
+| - Meshes & normals                  | YES       |
+| - UVs & Textures                    | YES       |
+| - Window Transparency               | YES       |
+| - Driving                           | YES       |
+| - Wheels                            | YES       |
+| - Animating wheels                  | YES       |
+| Cameras                             |           |
+| - Map                               | YES       |
+| - Third-person                      | YES       |
+| Light                               |           |
+| - Day – Sun (diffuse & ambient)     | YES / NO  |
+| - Day – Sun (specular)              | YES / NO  |
+| - Night – Headlights (point)        | YES / NO  |
+| - Night – Headlight cone            | YES / NO  |
+| Skybox                              | YES       |
+| Effects- Heat shimmer (*Challenge*) | YES       |
 
 # Documentation
 
