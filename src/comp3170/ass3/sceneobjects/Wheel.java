@@ -90,6 +90,7 @@ public class Wheel extends SceneObject {
     protected void drawSelf(Matrix4f mvpMatrix) {
         shader.enable();
         shader.setUniform("u_mvpMatrix", mvpMatrix);
+        shader.setUniform("u_modelMatrix", getMatrix());
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);

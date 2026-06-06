@@ -1,7 +1,8 @@
 #version 410
 
-in vec4 a_position;			// MODEL
 uniform mat4 u_mvpMatrix;	// MODEL -> NDC
+
+in vec4 a_position;			// MODEL
 
 out vec4 v_view;		// MODEL == WORLD
 

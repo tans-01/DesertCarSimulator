@@ -9,6 +9,7 @@ in vec2 v_uv;
 out vec4 o_colour;
 
 void main() {
-    vec4 colour = texture(u_texture, v_uv);
-    o_colour = vec4(colour.rgb, colour.a * u_alpha);
+    vec4 c = texture(u_texture, v_uv);
+    o_colour = vec4(c.rgb, c.a * u_alpha);
 }
+

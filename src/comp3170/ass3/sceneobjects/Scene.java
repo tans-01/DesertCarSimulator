@@ -9,6 +9,7 @@ import comp3170.ass3.cameras.PerspectiveCamera;
 import org.joml.Matrix4f;
 
 import java.io.IOException;
+import java.util.Random;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -35,6 +36,26 @@ public class Scene extends SceneObject {
 			desert.setParent(theScene);
 			car = new Car();
 			car.setParent(desert);
+			{
+				final var seed = 42;
+				final var treeCount = 20;
+				final var spawnBound = Desert.SIZE / 2;
+				final var minSize = 0.75F;
+				final var maxSize = 1.5F;
+				var rescale = 1 / 20F; // Trees are way too big by default
+				var random = new Random(seed);
+				var treeTransforms = new Matrix4f[treeCount];
+				for (int i = 0; i < treeCount; i++) {
+					var treeTransform = new Matrix4f().identity();
+					treeTransform.translate(random.nextFloat(-spawnBound, spawnBound), 0, random.nextFloat(-spawnBound, spawnBound));
+					treeTransform.rotateY(random.nextFloat() * (float) Math.TAU);
+					treeTransform.scale(random.nextFloat(minSize, maxSize));
+					treeTransform.scale(rescale);
+					treeTransforms[i] = treeTransform;
+				}
+				var tree = new Tree(treeTransforms);
+				tree.setParent(desert);
+			}
 		} catch (IOException | OpenGLException e) {
 			throw new RuntimeException(e);
 		}
@@ -60,7 +81,7 @@ public class Scene extends SceneObject {
 		if (input.wasKeyPressed(GLFW_KEY_4)) {
 			wireframe = !wireframe;
 		}
-	    car.update(input, deltaTime);
+		car.update(input, deltaTime);
 		activeCamera.update(input, deltaTime);
 		skybox.update(windowWidth, windowHeight);
 	}

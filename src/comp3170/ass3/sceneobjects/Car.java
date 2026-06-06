@@ -55,6 +55,7 @@ public class Car extends SceneObject {
 
     // one set of buffers per submesh
     private int[] vertexBuffers;
+    private int[] normalBuffers;
     private int[] uvBuffers;
     private int[] indexBuffers;
     private int[] indexCounts;
@@ -75,6 +76,7 @@ public class Car extends SceneObject {
 
         int n = SUBMESHES.length;
         vertexBuffers = new int[n];
+        normalBuffers = new int[n];
         uvBuffers = new int[n];
         indexBuffers = new int[n];
         indexCounts = new int[n];
@@ -83,6 +85,7 @@ public class Car extends SceneObject {
         for (int i = 0; i < n; i++) {
             Mesh mesh = data.getMesh(SUBMESHES[i]);    // The array will hold each submesh like body, interior
             vertexBuffers[i] = GLBuffers.createBuffer(mesh.vertices); // window.
+            normalBuffers[i] = GLBuffers.createBuffer(mesh.normals);
             uvBuffers[i] = GLBuffers.createBuffer(mesh.uvs);
             indexBuffers[i] = GLBuffers.createIndexBuffer(mesh.indices);
             indexCounts[i] = mesh.indices.length;
@@ -179,6 +182,7 @@ public class Car extends SceneObject {
 
         shader.enable();
         shader.setUniform("u_mvpMatrix", mvpMatrix);
+        shader.setUniform("u_modelMatrix", getMatrix());
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);

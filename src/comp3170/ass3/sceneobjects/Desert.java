@@ -30,7 +30,7 @@ public class Desert extends SceneObject {
     private static final String FRAG_SHADER = "simple.frag";
     private static final String TEXTURE = "sand.jpg";
     
-    private static final float SIZE = 100f; // 100x100 meters
+    static final float SIZE = 100f; // 100x100 meters
 
     private Shader shader;
     private int vertexBuffer;
@@ -73,16 +73,17 @@ public class Desert extends SceneObject {
     @Override
     protected void drawSelf(Matrix4f mvpMatrix) {
         shader.enable();
-        
-        shader.setAttribute("a_position", vertexBuffer);
-        shader.setAttribute("a_uv", uvBuffer);
         shader.setUniform("u_mvpMatrix", mvpMatrix);
-        
+        shader.setUniform("u_modelMatrix", getMatrix());
+
         // bind the texture to texture unit 0
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
         shader.setUniform("u_texture", 0);
-        shader.setUniform("u_alpha", 1.0f); 
+        shader.setUniform("u_alpha", 1.0f);
+
+        shader.setAttribute("a_position", vertexBuffer);
+        shader.setAttribute("a_uv", uvBuffer);
         
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
         glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
