@@ -182,7 +182,8 @@ public class Car extends SceneObject {
 
         shader.enable();
         shader.setUniform("u_mvpMatrix", mvpMatrix);
-        shader.setUniform("u_modelMatrix", getMatrix());
+        shader.setUniform("u_modelMatrix", getModelToWorldMatrix(new Matrix4f()));
+        shader.setUniform("u_debugNormals", Scene.theScene.debugNormals);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -202,6 +203,7 @@ public class Car extends SceneObject {
 
     private void drawSubmesh(int i) {
         shader.setAttribute("a_position", vertexBuffers[i]);
+        shader.setAttribute("a_normal", normalBuffers[i]);
         shader.setAttribute("a_uv", uvBuffers[i]);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffers[i]);
         glDrawElements(GL_TRIANGLES, indexCounts[i], GL_UNSIGNED_INT, 0);

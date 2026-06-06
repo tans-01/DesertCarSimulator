@@ -29,21 +29,22 @@ public class Desert extends SceneObject {
     private static final String VERT_SHADER = "simple.vert";
     private static final String FRAG_SHADER = "simple.frag";
     private static final String TEXTURE = "sand.jpg";
-    
+
     static final float SIZE = 100f; // 100x100 meters
 
-    private Shader shader;
-    private int vertexBuffer;
-    private int indexBuffer;
-    private int indexCount;
-    private int uvBuffer;
-    private int texture;
+    final Shader shader;
+    final int vertexBuffer;
+    final int normalBuffer;
+    final int indexBuffer;
+    final int indexCount;
+    final int uvBuffer;
+    final int texture;
 
     public Desert() throws IOException, OpenGLException {
     	shader = ShaderLibrary.instance.compileShader(VERT_SHADER, FRAG_SHADER);
         texture = TextureLibrary.instance.loadTexture(TEXTURE);
         TextureUtils.setupTexture(texture);
-        
+
         float h = SIZE / 2f; // 50
         float[] vertices = {
             -h, 0, -h, 1,   // back left
@@ -51,7 +52,14 @@ public class Desert extends SceneObject {
              h, 0,  h, 1,  // front right  (its vec4 because it needs to go with the shader which also
             -h, 0,  h, 1,  // front left	( being used for car which is vec4)
         };
-        
+
+		float[] normals = {
+			0, 1, 0, 1,
+			0, 1, 0, 1,
+			0, 1, 0, 1,
+			0, 1, 0, 1,
+		};
+
         float[] uvs = {    // i have set this a float you can also keep this a vector but
                 0,    0,   // dont forget to change the uvBuffer = GLBuffers.createBuffer(uvs, GL_FLOAT_VEC2);
                 SIZE, 0,   // right not it specifies the type of the uvs.
@@ -65,6 +73,7 @@ public class Desert extends SceneObject {
         };
 
         vertexBuffer = GLBuffers.createBuffer(vertices, GL_FLOAT_VEC4);
+        normalBuffer = GLBuffers.createBuffer(normals, GL_FLOAT_VEC4);
         uvBuffer = GLBuffers.createBuffer(uvs, GL_FLOAT_VEC2);
         indexBuffer = GLBuffers.createIndexBuffer(indices);
         indexCount = indices.length;
@@ -74,7 +83,8 @@ public class Desert extends SceneObject {
     protected void drawSelf(Matrix4f mvpMatrix) {
         shader.enable();
         shader.setUniform("u_mvpMatrix", mvpMatrix);
-        shader.setUniform("u_modelMatrix", getMatrix());
+        shader.setUniform("u_modelMatrix", getModelToWorldMatrix(new Matrix4f()));
+        shader.setUniform("u_debugNormals", Scene.theScene.debugNormals);
 
         // bind the texture to texture unit 0
         glActiveTexture(GL_TEXTURE0);
@@ -83,8 +93,9 @@ public class Desert extends SceneObject {
         shader.setUniform("u_alpha", 1.0f);
 
         shader.setAttribute("a_position", vertexBuffer);
+        shader.setAttribute("a_normal", normalBuffer);
         shader.setAttribute("a_uv", uvBuffer);
-        
+
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
         glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
     }

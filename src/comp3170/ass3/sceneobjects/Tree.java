@@ -62,6 +62,7 @@ public class Tree extends SceneObject {
 		glBindTexture(GL_TEXTURE_2D, texture);
 		shader.setUniform("u_texture", 0);
 		shader.setUniform("u_alpha", 1.0f);
+		shader.setUniform("u_debugNormals", Scene.theScene.debugNormals);
 
 		shader.setAttribute("a_position", vertexBuffer);
 		shader.setAttribute("a_normal", normalBuffer);

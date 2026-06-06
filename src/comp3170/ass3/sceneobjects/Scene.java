@@ -19,6 +19,7 @@ public class Scene extends SceneObject {
 	public static Scene theScene = null;
 	public boolean daytime = true;
 	public boolean wireframe = false;
+	public boolean debugNormals = false;
 	final Skybox skybox;
 	final Desert desert;
 	final Car car;
@@ -80,6 +81,9 @@ public class Scene extends SceneObject {
 		}
 		if (input.wasKeyPressed(GLFW_KEY_4)) {
 			wireframe = !wireframe;
+		}
+		if (input.wasKeyPressed(GLFW_KEY_5)) {
+			debugNormals = !debugNormals;
 		}
 		car.update(input, deltaTime);
 		activeCamera.update(input, deltaTime);

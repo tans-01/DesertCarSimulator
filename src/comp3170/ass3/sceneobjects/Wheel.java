@@ -1,30 +1,21 @@
 package comp3170.ass3.sceneobjects;
 
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glDrawElements;
-import static org.lwjgl.opengl.GL11.glBindTexture;
+import comp3170.*;
+import comp3170.ass3.TextureUtils;
+import comp3170.ass3.models.Mesh;
+import comp3170.ass3.models.ObjData;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.Math;
+
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-
-import comp3170.GLBuffers;
-import comp3170.OpenGLException;
-import comp3170.SceneObject;
-import comp3170.Shader;
-import comp3170.ShaderLibrary;
-import comp3170.TextureLibrary;
-import comp3170.ass3.TextureUtils;
-import comp3170.ass3.models.Mesh;
-import comp3170.ass3.models.ObjData;
 
 public class Wheel extends SceneObject {
 
@@ -34,15 +25,16 @@ public class Wheel extends SceneObject {
     private static final String OBJ_FILE = "src/comp3170/ass3/models/wheel.obj";
     private static final String SUBMESH = "Wheel";    
 
-    private Shader shader;
-    private int texture;
-    private int vertexBuffer;
-    private int uvBuffer;
-    private int indexBuffer;
-    private int indexCount;
-    private boolean isFront;
-    private boolean flipped;
-    private org.joml.Vector3f position;
+    final Shader shader;
+    final int texture;
+    final int vertexBuffer;
+    final int normalBuffer;
+    final int uvBuffer;
+    final int indexBuffer;
+    final int indexCount;
+    final boolean isFront;
+    final boolean flipped;
+    final Vector3f position;
     private float spinAngle = 0;
     
     public Wheel(Vector3f position, boolean isFront, boolean flipped) throws IOException, OpenGLException {
@@ -63,6 +55,7 @@ public class Wheel extends SceneObject {
 
         Mesh mesh = data.getMesh(SUBMESH);
         vertexBuffer = GLBuffers.createBuffer(mesh.vertices);
+        normalBuffer = GLBuffers.createBuffer(mesh.normals);
         uvBuffer = GLBuffers.createBuffer(mesh.uvs);
         indexBuffer = GLBuffers.createIndexBuffer(mesh.indices);
         indexCount = mesh.indices.length;
@@ -90,7 +83,8 @@ public class Wheel extends SceneObject {
     protected void drawSelf(Matrix4f mvpMatrix) {
         shader.enable();
         shader.setUniform("u_mvpMatrix", mvpMatrix);
-        shader.setUniform("u_modelMatrix", getMatrix());
+        shader.setUniform("u_modelMatrix", getModelToWorldMatrix(new Matrix4f()));
+        shader.setUniform("u_debugNormals", Scene.theScene.debugNormals);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -98,6 +92,7 @@ public class Wheel extends SceneObject {
         shader.setUniform("u_alpha", 1.0f); 
 
         shader.setAttribute("a_position", vertexBuffer);
+        shader.setAttribute("a_normal", normalBuffer);
         shader.setAttribute("a_uv", uvBuffer);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);

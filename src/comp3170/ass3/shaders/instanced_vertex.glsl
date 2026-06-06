@@ -12,7 +12,7 @@ out vec2 v_uv;
 
 void main() {
     gl_Position = u_mvpMatrix * a_modelMatrix * a_position;
-    v_normal = mat3(a_modelMatrix) * a_normal.xyz;
+    v_normal = normalize(mat3(a_modelMatrix) * a_normal.xyz);
     v_uv = a_uv;
 }
 
