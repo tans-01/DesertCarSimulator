@@ -47,7 +47,7 @@ public class Scene extends SceneObject {
 		activeCamera = thirdPersonCamera;
 	}
 
-	public void update(InputManager input, float deltaTime) {
+	public void update(int windowWidth, int windowHeight, InputManager input, float deltaTime) {
 		if (input.wasKeyPressed(GLFW_KEY_1)) {
 			activeCamera = mapCamera;
 		}
@@ -62,6 +62,7 @@ public class Scene extends SceneObject {
 		}
 	    car.update(input, deltaTime);
 		activeCamera.update(input, deltaTime);
+		skybox.update(windowWidth, windowHeight);
 	}
 
 	public Camera getCamera() {

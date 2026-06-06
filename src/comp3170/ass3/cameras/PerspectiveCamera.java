@@ -4,15 +4,12 @@ import comp3170.InputManager;
 import comp3170.SceneObject;
 import comp3170.ass3.sceneobjects.Scene;
 import org.joml.Matrix4f;
-import org.joml.Vector4f;
 
 import static comp3170.Math.TAU;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class PerspectiveCamera extends SceneObject implements Camera {
 
-	private static final float ASPECT = 1;
-	private static final float FOVY = TAU / 6;
 	private static final float HEIGHT = 2f;
 	static final float PITCH_SPEED = TAU / 4;
 	static final float ROTATION_SPEED = TAU / 4;
@@ -35,14 +32,9 @@ public class PerspectiveCamera extends SceneObject implements Camera {
 	float fovZoom = TAU / 6;
 
 	public Matrix4f cameraMatrix = new Matrix4f();
-	
+
 	public PerspectiveCamera() {
 		cameraMatrix.translate(0, HEIGHT, 0);
-	}
-		
-	@Override
-	public Matrix4f getCameraMatrix(Matrix4f dest) {
-		return dest.set(cameraMatrix);
 	}
 
 	@Override
@@ -51,15 +43,8 @@ public class PerspectiveCamera extends SceneObject implements Camera {
 	}
 
 	@Override
-	public Matrix4f getProjectionMatrix(Matrix4f dest) {
-		return dest.setPerspective(fovZoom, ASPECT, NEAR, FAR);
-	}
-	
-	@Override
-	public Vector4f getViewVector(Vector4f dest) {
-		// for a perspective camera
-		// the view vector is the origin point of the cameraMatrix
-		return cameraMatrix.getColumn(3, dest);
+	public Matrix4f getProjectionMatrix(Matrix4f dest, int windowWidth, int windowHeight) {
+		return dest.setPerspective(fovZoom, (float) windowWidth / windowHeight, NEAR, FAR);
 	}
 
 	public void update(InputManager input, float deltaTime) {

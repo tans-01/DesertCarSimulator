@@ -7,9 +7,7 @@ import org.joml.Vector4f;
 public interface Camera {
 	float NEAR = 0.1f;
 	float FAR = 500f;
-	Matrix4f getCameraMatrix(Matrix4f dest);
 	Matrix4f getViewMatrix(Matrix4f dest);
-	Matrix4f getProjectionMatrix(Matrix4f dest);
-	Vector4f getViewVector(Vector4f dest);
+	Matrix4f getProjectionMatrix(Matrix4f dest, int windowWidth, int windowHeight);
 	void update(InputManager input, float deltaTime);
 }

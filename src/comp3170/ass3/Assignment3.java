@@ -1,6 +1,7 @@
 package comp3170.ass3;
 
 import comp3170.*;
+import comp3170.ass3.cameras.PerspectiveCamera;
 import comp3170.ass3.sceneobjects.RenderTextureQuad;
 import comp3170.ass3.sceneobjects.Scene;
 import org.joml.Matrix4f;
@@ -61,6 +62,7 @@ public class Assignment3 implements IWindowListener {
 	private RenderTextureQuad renderTextureQuad;
 	private InputManager input;
 	private long oldTime;
+	private boolean resizePending;
 
 	// Camera
 	private Matrix4f viewMatrix = new Matrix4f();
@@ -70,6 +72,7 @@ public class Assignment3 implements IWindowListener {
 	public Assignment3() throws OpenGLException {
 		window = new Window("Assignment 3", screenWidth, screenHeight, this);
 		window.setSamples(4); //MSAA 4x
+		window.setResizable(true);
 		window.run();
 	}
 
@@ -93,6 +96,7 @@ public class Assignment3 implements IWindowListener {
 		renderTextureQuad = new RenderTextureQuad(screenWidth, screenHeight);
 		input = new InputManager(window);
 		oldTime = System.currentTimeMillis();
+		glClearColor(0, 0, 0, 0);
 	}
 
 	private void update() {
@@ -100,7 +104,7 @@ public class Assignment3 implements IWindowListener {
 	    float deltaTime = (time - oldTime) / 1000f;
 	    oldTime = time;
 
-	    scene.update(input, deltaTime);
+	    scene.update(screenWidth, screenHeight, input, deltaTime);
 		renderTextureQuad.update(deltaTime);
 
 	    input.clear();
@@ -108,9 +112,15 @@ public class Assignment3 implements IWindowListener {
 
 	@Override
 	public void draw() {
+		if (resizePending) {
+			resizePending = false;
+			renderTextureQuad = new RenderTextureQuad(screenWidth, screenHeight);
+		}
 		update();
 
-		var isScreenSpaceEffectEnabled = Scene.theScene.daytime;
+		glViewport(0, 0, screenWidth, screenHeight);
+
+		var isScreenSpaceEffectEnabled = Scene.theScene.daytime && Scene.theScene.getCamera() instanceof PerspectiveCamera;
 		if (isScreenSpaceEffectEnabled) {
 			// Pass 1: render the scene to a texture
 			int frameBuffer = renderTextureQuad.getFrameBuffer();
@@ -121,12 +131,11 @@ public class Assignment3 implements IWindowListener {
 		}
 
 		// Clear screen
-        glClearColor(0, 0, 0, 0); // light blue sky
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		var camera = scene.getCamera();
 		camera.getViewMatrix(viewMatrix);
-		camera.getProjectionMatrix(projMatrix);
+		camera.getProjectionMatrix(projMatrix, screenWidth, screenHeight);
 		mvpMatrix.set(projMatrix).mul(viewMatrix);
 
         // PASS 0: opaque geometry
@@ -144,7 +153,6 @@ public class Assignment3 implements IWindowListener {
 		if (isScreenSpaceEffectEnabled) {
 			// Pass 2: render the texture to a quad (with a filter)
 			// no camera is required, as the quad is drawn in NDC
-
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 			glClear(GL_COLOR_BUFFER_BIT);
@@ -161,6 +169,7 @@ public class Assignment3 implements IWindowListener {
 	public void resize(int width, int height) {
 		screenWidth = width;
 		screenHeight = height;
+		resizePending = true;
 	}
 
 	@Override

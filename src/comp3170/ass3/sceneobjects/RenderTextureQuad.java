@@ -5,9 +5,12 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
+import java.nio.ByteBuffer;
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
+import static org.lwjgl.opengl.GL30.*;
 
 public class RenderTextureQuad extends SceneObject {
 
@@ -29,14 +32,12 @@ public class RenderTextureQuad extends SceneObject {
 		this.shader = ShaderLibrary.instance.compileShader(VERTEX_SHADER, FRAGMENT_SHADER);
 		createQuad();
 		renderTexture = TextureLibrary.instance.createRenderTexture(width, height, GL_RGBA);
-
 		try {
 			frameBuffer = GLBuffers.createFrameBuffer(renderTexture);
 		} catch (OpenGLException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
-
 	}
 
 	public int getRenderTexture() {

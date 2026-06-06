@@ -43,8 +43,9 @@ public class Skybox extends SceneObject {
 	private int indexBuffer;
 	private int dayTexture;
 	private int nightTexture;
+	private int windowWidth;
+	private int windowHeight;
 
-	
 	public Skybox() {
 		shader = ShaderLibrary.instance.compileShader(VERTEX_SHADER, FRAGMENT_SHADER);
 		shader.setStrict(false);
@@ -129,6 +130,11 @@ public class Skybox extends SceneObject {
 	final Matrix4f mvpMatrix = new Matrix4f();
 	final Vector4f origin = new Vector4f(0,0,0,1);
 
+	public void update(int windowWidth, int windowHeight) {
+		this.windowWidth = windowWidth;
+		this.windowHeight = windowHeight;
+	}
+
 	@Override
 	protected void drawSelf(Matrix4f mvpMatrixIgnored) {
 		if (!(Scene.theScene.getCamera() instanceof PerspectiveCamera)) {
@@ -139,7 +145,7 @@ public class Skybox extends SceneObject {
 		// so it is always centred on the perspective camera
 		Scene.theScene.getCamera().getViewMatrix(viewMatrix);
 		viewMatrix.setTranslation(0, 0, 0);
-		Scene.theScene.getCamera().getProjectionMatrix(projectionMatrix);
+		Scene.theScene.getCamera().getProjectionMatrix(projectionMatrix, windowWidth, windowHeight);
 		projectionMatrix.mul(viewMatrix, mvpMatrix);
 
 		shader.enable();
