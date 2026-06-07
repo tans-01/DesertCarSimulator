@@ -28,6 +28,7 @@ public class Scene extends SceneObject {
 	final OrthographicCamera mapCamera;
 	Camera activeCamera;
 	public Light light;
+	public float sunspeed = 1f;
 
 	public Scene() {
 		theScene = this;
@@ -91,6 +92,13 @@ public class Scene extends SceneObject {
 		car.update(input, deltaTime);
 		activeCamera.update(input, deltaTime);
 		skybox.update(windowWidth, windowHeight);
+		
+		if (input.isKeyDown(GLFW_KEY_LEFT_BRACKET)) {
+			light.sunRotaion(-sunspeed * deltaTime);
+		}
+		if (input.isKeyDown(GLFW_KEY_RIGHT_BRACKET)) {
+		    light.sunRotaion(sunspeed * deltaTime);  
+		}
 	}
 
 	public Camera getCamera() {

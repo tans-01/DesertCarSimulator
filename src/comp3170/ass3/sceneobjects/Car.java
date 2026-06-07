@@ -176,10 +176,14 @@ public class Car extends SceneObject {
 
     @Override
     protected void drawSelf(Matrix4f mvpMatrix, int pass) {
-        // Flip from US (left-hand drive) to Australian (right-hand drive) layout
-        mvpMatrix.scale(-1, 1, 1);
-        // Fix model pointing backwards
+      
+    	mvpMatrix.scale(-1, 1, 1);
         mvpMatrix.rotateY((float) Math.TAU / 2);
+
+        // building the model matrix, so normals match positions
+        Matrix4f modelMatrix = getModelToWorldMatrix(new Matrix4f());
+        modelMatrix.scale(-1, 1, 1);
+        modelMatrix.rotateY((float) Math.TAU / 2);
 
         shader.enable();
         shader.setUniform("u_mvpMatrix", mvpMatrix);
