@@ -28,6 +28,7 @@ import comp3170.SceneObject;
 import comp3170.Shader;
 import comp3170.ShaderLibrary;
 import comp3170.TextureLibrary;
+import comp3170.ass3.Light;
 import comp3170.ass3.TextureUtils;
 import comp3170.ass3.models.Mesh;
 import comp3170.ass3.models.ObjData;
@@ -184,7 +185,13 @@ public class Car extends SceneObject {
         shader.setUniform("u_mvpMatrix", mvpMatrix);
         shader.setUniform("u_modelMatrix", getModelToWorldMatrix(new Matrix4f()));
         shader.setUniform("u_debugNormals", Scene.theScene.debugNormals);
-
+        
+        //light
+        Light light = Scene.theScene.light;
+        shader.setUniform("u_lightDirection", light.getDirection());
+        shader.setUniform("u_lightColour", light.getColour());
+        shader.setUniform("u_ambientColour", light.getAmbient());
+        
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
         shader.setUniform("u_texture", 0);

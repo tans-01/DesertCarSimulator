@@ -1,12 +1,14 @@
 package comp3170.ass3.sceneobjects;
 
 import comp3170.*;
+import comp3170.ass3.Light;
 import comp3170.ass3.TextureUtils;
 import comp3170.ass3.models.Mesh;
 import comp3170.ass3.models.ObjData;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-
+import comp3170.ass3.Light;
+import comp3170.ass3.sceneobjects.Scene;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.Math;
@@ -85,7 +87,13 @@ public class Wheel extends SceneObject {
         shader.setUniform("u_mvpMatrix", mvpMatrix);
         shader.setUniform("u_modelMatrix", getModelToWorldMatrix(new Matrix4f()));
         shader.setUniform("u_debugNormals", Scene.theScene.debugNormals);
-
+        
+        //light
+        Light light = Scene.theScene.light;
+        shader.setUniform("u_lightDirection", light.getDirection());
+        shader.setUniform("u_lightColour", light.getColour());
+        shader.setUniform("u_ambientColour", light.getAmbient());
+        
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
         shader.setUniform("u_texture", 0);

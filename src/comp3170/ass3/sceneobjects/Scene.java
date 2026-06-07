@@ -3,6 +3,7 @@ package comp3170.ass3.sceneobjects;
 import comp3170.InputManager;
 import comp3170.OpenGLException;
 import comp3170.SceneObject;
+import comp3170.ass3.Light;
 import comp3170.ass3.cameras.Camera;
 import comp3170.ass3.cameras.OrthographicCamera;
 import comp3170.ass3.cameras.PerspectiveCamera;
@@ -26,6 +27,7 @@ public class Scene extends SceneObject {
 	final PerspectiveCamera thirdPersonCamera;
 	final OrthographicCamera mapCamera;
 	Camera activeCamera;
+	public Light light;
 
 	public Scene() {
 		theScene = this;
@@ -37,6 +39,7 @@ public class Scene extends SceneObject {
 			desert.setParent(theScene);
 			car = new Car();
 			car.setParent(desert);
+			light = new Light();
 			{
 				final var seed = 42;
 				final var treeCount = 20;
