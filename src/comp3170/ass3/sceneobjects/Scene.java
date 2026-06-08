@@ -24,6 +24,7 @@ public class Scene extends SceneObject {
 	public boolean debugNormals = false;
 	final Skybox skybox;
 	final Desert desert;
+	final Road road;
 	final Car car;
 	final PerspectiveCamera thirdPersonCamera;
 	final OrthographicCamera mapCamera;
@@ -39,6 +40,8 @@ public class Scene extends SceneObject {
 		try {
 			desert = new Desert();
 			desert.setParent(theScene);
+			road = new Road();
+			road.setParent(desert);
 			car = new Car();
 			car.setParent(desert);
 			light = new Light();
