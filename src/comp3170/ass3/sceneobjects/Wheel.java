@@ -88,6 +88,9 @@ public class Wheel extends SceneObject {
         shader.setUniform("u_modelMatrix", getModelToWorldMatrix(new Matrix4f()));
         shader.setUniform("u_debugNormals", Scene.theScene.debugNormals);
         
+        shader.setUniform("u_daytime", Scene.theScene.daytime);
+        shader.setUniform("u_headlightposition", Scene.theScene.getHeadlightPosition());
+        
         //light
         Light light = Scene.theScene.light;
         shader.setUniform("u_lightDirection", light.getDirection());

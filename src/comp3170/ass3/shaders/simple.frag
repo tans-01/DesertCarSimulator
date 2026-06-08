@@ -11,6 +11,9 @@ uniform vec3 u_ambientColour;    // ambience
 uniform vec3 u_cameraposition;
 uniform bool u_shiny;
 
+uniform vec3 u_headlightposition;
+uniform bool u_daytime;
+
 in vec3 v_normal;
 in vec2 v_uv;
 in vec3 v_worldpos;
@@ -23,18 +26,26 @@ void main() {
         return;
     }    
     vec4 texColour = texture(u_texture, v_uv);
-    
 	vec3 normal = normalize(v_normal);
+	
+	//light direction according to the daytime
+	
+	vec3 lightdir;
+	if(u_daytime) {
+	lightdir = normalize(u_lightDirection);
+	} else {
+	lightdir = normalize(u_headlightposition - v_worldpos);  //point light we need to know the dir
+	}
 	
 	//difuse
 	
-	float diffuse = max(dot(normal, u_lightDirection), 0.0);
+	float diffuse = max(dot(normal, lightdir), 0.0);
 	
 	//specular:
 	vec3 specular = vec3(0.0);
 	if(u_shiny) {
 		vec3 view = normalize(u_cameraposition - v_worldpos);
-        vec3 reflectDir = reflect(-u_lightDirection, normal);
+        vec3 reflectDir = reflect(-lightdir, normal);
         float spec = pow(max(dot(reflectDir, view), 0.0), 32.0);
         specular = u_lightColour * spec;
     }

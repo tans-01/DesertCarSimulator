@@ -8,6 +8,7 @@ import comp3170.ass3.cameras.Camera;
 import comp3170.ass3.cameras.OrthographicCamera;
 import comp3170.ass3.cameras.PerspectiveCamera;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import java.io.IOException;
 import java.util.Random;
@@ -71,6 +72,15 @@ public class Scene extends SceneObject {
 		mapCamera.setParent(theScene);
 
 		activeCamera = thirdPersonCamera;
+	}
+	
+	public Vector3f getHeadlightPosition() {
+	    Vector3f local = new Vector3f(0, 0.93f, 2.1f);   // headlight in car model space
+	    Matrix4f carMatrix = car.getModelToWorldMatrix(new Matrix4f());
+	    //same flip as car
+	    carMatrix.scale(-1, 1, 1);
+	    carMatrix.rotateY((float) Math.TAU / 2);
+	    return carMatrix.transformPosition(local, new Vector3f()); //updating the headlight pos
 	}
 
 	public void update(int windowWidth, int windowHeight, InputManager input, float deltaTime) {
