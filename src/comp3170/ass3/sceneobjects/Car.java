@@ -14,6 +14,9 @@ import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL11.glFrontFace;
+import static org.lwjgl.opengl.GL11.GL_CW;
+import static org.lwjgl.opengl.GL11.GL_CCW;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -186,8 +189,9 @@ public class Car extends SceneObject {
         modelMatrix.rotateY((float) Math.TAU / 2);
 
         shader.enable();
+        glFrontFace(GL_CW);    // car is mirrored, so its winding is reversed
         shader.setUniform("u_mvpMatrix", mvpMatrix);
-        shader.setUniform("u_modelMatrix", getModelToWorldMatrix(new Matrix4f()));
+        shader.setUniform("u_modelMatrix", modelMatrix);
         shader.setUniform("u_debugNormals", Scene.theScene.debugNormals);
         
         shader.setUniform("u_daytime", Scene.theScene.daytime);
@@ -220,6 +224,7 @@ public class Car extends SceneObject {
             shader.setUniform("u_shiny", true);    // Windows - shiny glass
             drawSubmesh(2);
         }
+        glFrontFace(GL_CCW);   // restore default for other objects   
     }
 
     private void drawSubmesh(int i) {

@@ -85,7 +85,7 @@ public class Assignment3 implements IWindowListener {
 		// Enable depth testing so closer objects appear in front
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_MULTISAMPLE);
-
+		glEnable(GL_CULL_FACE);
 		new TextureLibrary(new File[] {
 			new File("src/comp3170/ass3/textures"),
 			new File("src/comp3170/ass3/textures/skies"),

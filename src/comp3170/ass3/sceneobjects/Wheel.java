@@ -84,6 +84,7 @@ public class Wheel extends SceneObject {
     @Override
     protected void drawSelf(Matrix4f mvpMatrix) {
         shader.enable();
+        glFrontFace(GL_CW);
         shader.setUniform("u_mvpMatrix", mvpMatrix);
         shader.setUniform("u_modelMatrix", getModelToWorldMatrix(new Matrix4f()));
         shader.setUniform("u_debugNormals", Scene.theScene.debugNormals);
@@ -114,5 +115,6 @@ public class Wheel extends SceneObject {
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
         glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+        glFrontFace(GL_CCW);
     }
 }

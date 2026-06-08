@@ -69,10 +69,10 @@ public class Desert extends SceneObject {
                 0,    SIZE,
             };
 
-        int[] indices = {
-            0, 1, 2,
-            0, 2, 3,
-        };
+        int[] indices = {  // indices in the reverse order otherwise culling make it vanish
+        	    0, 2, 1,
+        	    0, 3, 2,
+        	};
 
         vertexBuffer = GLBuffers.createBuffer(vertices, GL_FLOAT_VEC4);
         normalBuffer = GLBuffers.createBuffer(normals, GL_FLOAT_VEC4);
