@@ -15,6 +15,7 @@ import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC4;
 import java.io.IOException;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import comp3170.GLBuffers;
 import comp3170.OpenGLException;
@@ -92,6 +93,11 @@ public class Desert extends SceneObject {
         shader.setUniform("u_lightDirection", light.getDirection());
         shader.setUniform("u_lightColour", light.getColour());
         shader.setUniform("u_ambientColour", light.getAmbient());
+        
+        //spec
+        Vector3f camPos = Scene.theScene.getCamera().getPosition(new Vector3f());
+        shader.setUniform("u_cameraposition", camPos);
+        shader.setUniform("u_shiny", false);
         
         // bind the texture to texture unit 0
         glActiveTexture(GL_TEXTURE0);

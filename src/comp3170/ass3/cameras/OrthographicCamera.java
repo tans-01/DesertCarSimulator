@@ -3,6 +3,7 @@ package comp3170.ass3.cameras;
 import comp3170.InputManager;
 import comp3170.SceneObject;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import static comp3170.Math.TAU;
 
@@ -44,5 +45,9 @@ public class OrthographicCamera extends SceneObject implements Camera {
 		cameraMatrix.translate(0.0f, ELEVATION, 0);
 		// Rotate so we are looking down
 		cameraMatrix.rotateX(-TAU / 4);
+	}
+	@Override
+	public Vector3f getPosition(Vector3f dest) {
+	    return cameraMatrix.getTranslation(dest);
 	}
 }

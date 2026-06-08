@@ -196,6 +196,9 @@ public class Car extends SceneObject {
         shader.setUniform("u_lightColour", light.getColour());
         shader.setUniform("u_ambientColour", light.getAmbient());
         
+        Vector3f camPos = Scene.theScene.getCamera().getPosition(new Vector3f());
+        shader.setUniform("u_cameraposition", camPos);
+        
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
         shader.setUniform("u_texture", 0);
@@ -203,11 +206,14 @@ public class Car extends SceneObject {
         if (pass == 0) {
             // OPAQUE PASS: Body (0) and Interior (1)
             shader.setUniform("u_alpha", 1.0f);
+            shader.setUniform("u_shiny", true);    // Body - shiny paint
             drawSubmesh(0);
+            shader.setUniform("u_shiny", false);   // Interior - matte
             drawSubmesh(1);
         } else if (pass == 1) {
             // TRANSPARENT PASS: Windows (2)
             shader.setUniform("u_alpha", 0.2f);
+            shader.setUniform("u_shiny", true);    // Windows - shiny glass
             drawSubmesh(2);
         }
     }

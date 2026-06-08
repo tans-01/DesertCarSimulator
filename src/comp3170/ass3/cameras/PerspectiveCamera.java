@@ -4,6 +4,7 @@ import comp3170.InputManager;
 import comp3170.SceneObject;
 import comp3170.ass3.sceneobjects.Scene;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import static comp3170.Math.TAU;
 import static org.lwjgl.glfw.GLFW.*;
@@ -46,7 +47,12 @@ public class PerspectiveCamera extends SceneObject implements Camera {
 	public Matrix4f getProjectionMatrix(Matrix4f dest, int windowWidth, int windowHeight) {
 		return dest.setPerspective(fovZoom, (float) windowWidth / windowHeight, NEAR, FAR);
 	}
-
+	
+	@Override
+	public Vector3f getPosition(Vector3f dest) {
+	    return cameraMatrix.getTranslation(dest);
+	}
+	
 	public void update(InputManager input, float deltaTime) {
 		if (input.isKeyDown(GLFW_KEY_UP)) {
 			pitchRadians = Math.min(MAX_PITCH, pitchRadians + PITCH_SPEED * deltaTime);

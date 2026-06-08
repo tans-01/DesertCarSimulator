@@ -94,6 +94,11 @@ public class Wheel extends SceneObject {
         shader.setUniform("u_lightColour", light.getColour());
         shader.setUniform("u_ambientColour", light.getAmbient());
         
+        //spec
+        Vector3f camPos = Scene.theScene.getCamera().getPosition(new Vector3f());
+        shader.setUniform("u_cameraposition", camPos);
+        shader.setUniform("u_shiny", false);
+        
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
         shader.setUniform("u_texture", 0);
