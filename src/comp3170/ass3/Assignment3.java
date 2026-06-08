@@ -53,6 +53,8 @@ import static org.lwjgl.opengl.GL30.glBindFramebuffer;
  */
 public class Assignment3 implements IWindowListener {
 
+	public static final int MSAA_SAMPLES = 4;
+
 	private Window window;
 	private int screenWidth = 1000;
 	private int screenHeight = 1000;
@@ -71,7 +73,7 @@ public class Assignment3 implements IWindowListener {
 
 	public Assignment3() throws OpenGLException {
 		window = new Window("Assignment 3", screenWidth, screenHeight, this);
-		window.setSamples(4); //MSAA 4x
+		window.setSamples(MSAA_SAMPLES); //MSAA 4x
 		window.setResizable(true);
 		window.run();
 	}
