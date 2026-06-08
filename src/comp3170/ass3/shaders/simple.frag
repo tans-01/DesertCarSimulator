@@ -21,12 +21,15 @@ in vec3 v_worldpos;
 
 out vec4 o_colour;
 
+const float GAMMA = 2.2;
+
 void main() {
     if (u_debugNormals) {
         o_colour = vec4(v_normal, 1.0);
         return;
     }    
     vec4 texColour = texture(u_texture, v_uv);
+    vec3 linearColour = pow(texColour.rgb, vec3(GAMMA)); //convert brightness to intensity
 	vec3 normal = normalize(v_normal);
 	
 	vec3 lightdir;
@@ -70,8 +73,9 @@ void main() {
     }
 	
 	vec3 lighting = u_ambientColour + u_lightColour * diffuse; //ambient
+	vec3 lit = linearColour * lighting + specular;   
 	
-	vec3 texturecolour = texColour.rgb * lighting + specular;  //colour or the texture
+	vec3 gammaCorrected = pow(lit, vec3(1.0 / GAMMA));
 	
-	o_colour = vec4(texturecolour, texColour.a * u_alpha);
+	o_colour = vec4(gammaCorrected, texColour.a * u_alpha);
 }
