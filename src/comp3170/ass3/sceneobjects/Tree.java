@@ -1,9 +1,11 @@
 package comp3170.ass3.sceneobjects;
 
 import comp3170.*;
+import comp3170.ass3.Light;
 import comp3170.ass3.TextureUtils;
 import comp3170.ass3.models.ObjData;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import java.io.IOException;
 
@@ -63,6 +65,21 @@ public class Tree extends SceneObject {
 		shader.setUniform("u_texture", 0);
 		shader.setUniform("u_alpha", 1.0f);
 		shader.setUniform("u_debugNormals", Scene.theScene.debugNormals);
+
+		shader.setUniform("u_daytime", Scene.theScene.daytime);
+		shader.setUniform("u_headlightposition", Scene.theScene.getHeadlightPosition());
+		shader.setUniform("u_spotdirection", Scene.theScene.getHeadlightDirection());
+
+		//light
+		Light light = Scene.theScene.light;
+		shader.setUniform("u_lightDirection", light.getDirection());
+		shader.setUniform("u_lightColour", light.getColour());
+		shader.setUniform("u_ambientColour", light.getAmbient());
+
+		//spec
+		Vector3f camPos = Scene.theScene.getCamera().getPosition(new Vector3f());
+		shader.setUniform("u_cameraposition", camPos);
+		shader.setUniform("u_shiny", false);
 
 		shader.setAttribute("a_position", vertexBuffer);
 		shader.setAttribute("a_normal", normalBuffer);

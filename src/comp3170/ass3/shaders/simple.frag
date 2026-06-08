@@ -27,7 +27,7 @@ void main() {
     if (u_debugNormals) {
         o_colour = vec4(v_normal, 1.0);
         return;
-    }    
+    }
     vec4 texColour = texture(u_texture, v_uv);
     vec3 linearColour = pow(texColour.rgb, vec3(GAMMA)); //convert brightness to intensity
 	vec3 normal = normalize(v_normal);
@@ -37,7 +37,7 @@ void main() {
     
 	//light direction according to the daytime
 	
-	if(u_daytime) {
+	if (u_daytime) {
 		lightdir = normalize(u_lightDirection);
 	} else {
 		vec3 towardlight = u_headlightposition - v_worldpos;
@@ -65,7 +65,7 @@ void main() {
 	
 	//specular:
 	vec3 specular = vec3(0.0);
-	if(u_shiny) {
+	if (u_shiny) {
 		vec3 view = normalize(u_cameraposition - v_worldpos);
         vec3 reflectDir = reflect(-lightdir, normal);
         float spec = pow(max(dot(reflectDir, view), 0.0), 32.0);

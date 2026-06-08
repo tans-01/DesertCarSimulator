@@ -14,6 +14,6 @@ out vec3 v_worldpos;
 void main() {
     gl_Position = u_mvpMatrix * a_position;
     v_normal = normalize(mat3(u_modelMatrix) * a_normal.xyz);
-     v_worldpos = (u_modelMatrix * a_position).xyz;   //vertex position in world space for specular
+    v_worldpos = (u_modelMatrix * a_position).xyz;   //vertex position in world space for specular
     v_uv = a_uv;
 }
