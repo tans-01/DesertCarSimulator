@@ -73,16 +73,26 @@ public class Scene extends SceneObject {
 
 		activeCamera = thirdPersonCamera;
 	}
-	
-	public Vector3f getHeadlightPosition() {
-	    Vector3f local = new Vector3f(0, 0.93f, 2.1f);   // headlight in car model space
+	// directio of the headlight 
+	public Vector3f getHeadlightDirection() {
 	    Matrix4f carMatrix = car.getModelToWorldMatrix(new Matrix4f());
-	    //same flip as car
-	    carMatrix.scale(-1, 1, 1);
+	    //fliping becaue of the flipped car
+	    //carMatrix.scale(-1, 1, 1); 
 	    carMatrix.rotateY((float) Math.TAU / 2);
-	    return carMatrix.transformPosition(local, new Vector3f()); //updating the headlight pos
-	}
 
+	    // transform the forward direction (w=0 so translation is ignored)
+	    Vector3f forward = new Vector3f(0, -0.3f, 1);
+	    return carMatrix.transformDirection(forward, new Vector3f()).normalize();
+	}
+	// poistion of the headlight on the car
+	public Vector3f getHeadlightPosition() {
+	    Vector3f local = new Vector3f(0, 0.93f, 2.1f); // headlight on the car space
+	    Matrix4f carMatrix = car.getModelToWorldMatrix(new Matrix4f());
+	    //carMatrix.scale(-1, 1, 1);
+	    carMatrix.rotateY((float) Math.TAU / 2);
+	    return carMatrix.transformPosition(local, new Vector3f()); // position in the world space
+	}
+	
 	public void update(int windowWidth, int windowHeight, InputManager input, float deltaTime) {
 		if (input.wasKeyPressed(GLFW_KEY_1)) {
 			activeCamera = mapCamera;

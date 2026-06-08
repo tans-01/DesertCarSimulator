@@ -90,6 +90,7 @@ public class Desert extends SceneObject {
         
         shader.setUniform("u_daytime", Scene.theScene.daytime);
         shader.setUniform("u_headlightposition", Scene.theScene.getHeadlightPosition());
+        shader.setUniform("u_spotdirection", Scene.theScene.getHeadlightDirection());
         
         //light
         Light light = Scene.theScene.light;
