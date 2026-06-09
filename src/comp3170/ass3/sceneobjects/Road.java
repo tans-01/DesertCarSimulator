@@ -46,34 +46,66 @@ public class Road extends SceneObject {
 		TextureUtils.setupTexture(texture);
 
 
-		var segmentCount = CONTROL_POINTS.length - 1;
+		
+		
+		
+		var h = WIDTH / 2;
+		
+		int SMOOTH = 20;
+		int pointcount = SMOOTH + 1;
+		var segmentCount = SMOOTH;
 		var vertices = new Vector4f[segmentCount * 4];
 		var normals = new Vector4f[vertices.length];
 		var uvs = new Vector2f[vertices.length];
-		var h = WIDTH / 2;
 		
-		for (var i = 0; i < segmentCount; i++) {
-			var c1 = CONTROL_POINTS[i];
-			var c2 = CONTROL_POINTS[i + 1];
-			var j = i * 4;
-			
-			Vector3f dir = new Vector3f(c2.x - c1.x, 0, c2.z - c1.z).normalize();
-			Vector3f perp = new Vector3f(-dir.z, 0, dir.x).mul(h);
-					
-			vertices[j + 0] = new Vector4f(c1.x - perp.x, c1.y + HEIGHT, c1.z - perp.z, 1); //left start
-			vertices[j + 1] = new Vector4f(c1.x + perp.x, c1.y + HEIGHT, c1.z + perp.z, 1); //right start
-			vertices[j + 2] = new Vector4f(c2.x - perp.x, c2.y + HEIGHT, c2.z - perp.z, 1); //left end
-			vertices[j + 3] = new Vector4f(c2.x + perp.x, c2.y + HEIGHT, c2.z + perp.z, 1); //right end
-			
-			normals[j + 0] = new Vector4f(0, 1, 0, 1);
-			normals[j + 1] = new Vector4f(0, 1, 0, 1);
-			normals[j + 2] = new Vector4f(0, 1, 0, 1);
-			normals[j + 3] = new Vector4f(0, 1, 0, 1);
-			
-			uvs[j + 0] = new Vector2f(0, 0);
-			uvs[j + 1] = new Vector2f(1, 0);
-			uvs[j + 2] =  new Vector2f(0, 1);
-			uvs[j + 3] = new Vector2f(1, 1);
+		
+		Vector3f[] curvy = new Vector3f[pointcount];
+		for (int i = 0; i < pointcount; i++) {
+		    float t = (float) i / SMOOTH;
+		    curvy[i] = bezier(t);
+		}
+
+		// compute a perpendicular AT EACH POINT (so edges line up)
+		Vector3f[] perp = new Vector3f[pointcount];
+		for (int i = 0; i < pointcount; i++) {
+		    Vector3f prev = curvy[Math.max(i - 1, 0)];
+		    Vector3f next = curvy[Math.min(i + 1, pointcount - 1)];
+		    Vector3f dir = new Vector3f(next.x - prev.x, 0, next.z - prev.z).normalize();
+		    perp[i] = new Vector3f(-dir.z, 0, dir.x).mul(h);
+		}
+
+		// distance for tiling
+		float[] dist = new float[pointcount];
+		dist[0] = 0;
+		for (int i = 1; i < pointcount; i++) {
+		    dist[i] = dist[i - 1] + curvy[i].distance(curvy[i - 1]);
+		}
+		float TILE = 0.1f;
+
+		// each point uses ITS OWN perp, so shared edges match
+		for (int i = 0; i < segmentCount; i++) {
+		    Vector3f c1 = curvy[i];
+		    Vector3f c2 = curvy[i + 1];
+		    Vector3f p1 = perp[i];       // perpendicular at start point
+		    Vector3f p2 = perp[i + 1];   // perpendicular at end point
+		    int j = i * 4;
+
+		    vertices[j + 0] = new Vector4f(c1.x - p1.x, c1.y + HEIGHT, c1.z - p1.z, 1);
+		    vertices[j + 1] = new Vector4f(c1.x + p1.x, c1.y + HEIGHT, c1.z + p1.z, 1);
+		    vertices[j + 2] = new Vector4f(c2.x - p2.x, c2.y + HEIGHT, c2.z - p2.z, 1);
+		    vertices[j + 3] = new Vector4f(c2.x + p2.x, c2.y + HEIGHT, c2.z + p2.z, 1);
+
+		    normals[j + 0] = new Vector4f(0, 1, 0, 0);
+		    normals[j + 1] = new Vector4f(0, 1, 0, 0);
+		    normals[j + 2] = new Vector4f(0, 1, 0, 0);
+		    normals[j + 3] = new Vector4f(0, 1, 0, 0);
+
+		    float v1 = dist[i] * TILE;
+		    float v2 = dist[i + 1] * TILE;
+		    uvs[j + 0] = new Vector2f(v1, 0);   
+		    uvs[j + 1] = new Vector2f(v1, 1);
+		    uvs[j + 2] = new Vector2f(v2, 0);
+		    uvs[j + 3] = new Vector2f(v2, 1);
 		}
 		var indicess = new int[segmentCount * 6];
 		for (var i = 0; i < segmentCount; i++) {
@@ -92,6 +124,20 @@ public class Road extends SceneObject {
 		uvBuffer = GLBuffers.createBuffer(uvs);
 		indexBuffer = GLBuffers.createIndexBuffer(indicess);
 		indexCount = indicess.length;
+	}
+	//bezier formula B(t) = (1-t)³·P0 + 3(1-t)²·t·P1 + 3(1-t)·t²·P2 + t³·P3
+	private Vector3f bezier(float t) {
+	    float u = 1 - t;
+	    float b0 = u * u * u;          // (1-t)^3
+	    float b1 = 3 * u * u * t;      // 3(1-t)^2 t
+	    float b2 = 3 * u * t * t;      // 3(1-t) t^2
+	    float b3 = t * t * t;          // t^3
+
+	    Vector3f p = new Vector3f();
+	    p.x = b0*CONTROL_POINTS[0].x + b1*CONTROL_POINTS[1].x + b2*CONTROL_POINTS[2].x + b3*CONTROL_POINTS[3].x;
+	    p.y = b0*CONTROL_POINTS[0].y + b1*CONTROL_POINTS[1].y + b2*CONTROL_POINTS[2].y + b3*CONTROL_POINTS[3].y;
+	    p.z = b0*CONTROL_POINTS[0].z + b1*CONTROL_POINTS[1].z + b2*CONTROL_POINTS[2].z + b3*CONTROL_POINTS[3].z;
+	    return p;
 	}
 
 	@Override
