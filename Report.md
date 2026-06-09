@@ -1,10 +1,10 @@
 # COMP3170 Assignment 1 Report
 
-### Student 1 Name: [Your name here]
-### Student 1 ID: [Your ID here]
+### Student 1 Name: [Cadigal]
+### Student 1 ID: [47100192]
 
-### Student 2 Name: [Your name here]
-### Student 2 ID: [Your ID here]
+### Student 2 Name: [Tanish]
+### Student 2 ID: [47896345]
 
 ## Your Development Environment
 ### Cadigal (47100192)
@@ -24,14 +24,14 @@
 
 |Spec|Answer|
 |----|-----|
-|Java JDK version used for compilation|-|
-|Java compiler compliance level used for compilation|-|
-|Java JRE version used for execution|-|
-|Eclipse version|-|
-|Your screen dimensions (width x height)|-|
-|Your computer type (Mac/PC)|-|
-|Your computer make and model|-|
-|Your computer Operating System and version|-|
+|Java JDK version used for compilation|22.0.2|
+|Java compiler compliance level used for compilation|21|
+|Java JRE version used for execution| 22.0.2 (build 22.0.2+9-70)|
+|Eclipse version|Version: 2026-03 (4.39.0)|
+|Your screen dimensions (width x height)|1920 x 1080|
+|Your computer type (Mac/PC)|PC|
+|Your computer make and model|Acer Nitro AN515-45|
+|Your computer Operating System and version|Windows 11 Home Single Language, 25H2|
 
 ## Features Attempted
 Complete the table below indicating the features you have attempted. This will be used as a guide by your marker for what elements to look for, and dictate your <b>Completeness</b> mark.
@@ -60,10 +60,10 @@ Complete the table below indicating the features you have attempted. This will b
 | - Map                               | YES       |
 | - Third-person                      | YES       |
 | Light                               |           |
-| - Day – Sun (diffuse & ambient)     | YES / NO  |
-| - Day – Sun (specular)              | YES / NO  |
-| - Night – Headlights (point)        | YES / NO  |
-| - Night – Headlight cone            | YES / NO  |
+| - Day – Sun (diffuse & ambient)     | YES 	  |
+| - Day – Sun (specular)              | YES 	  |
+| - Night – Headlights (point)        | YES 	  |
+| - Night – Headlight cone            | YES 	  |
 | Skybox                              | YES       |
 | Effects- Heat shimmer (*Challenge*) | YES       |
 

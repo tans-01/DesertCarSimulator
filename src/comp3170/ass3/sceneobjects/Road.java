@@ -50,35 +50,48 @@ public class Road extends SceneObject {
 		var vertices = new Vector4f[segmentCount * 4];
 		var normals = new Vector4f[vertices.length];
 		var uvs = new Vector2f[vertices.length];
-		var indices = new int[vertices.length];
 		var h = WIDTH / 2;
+		
 		for (var i = 0; i < segmentCount; i++) {
 			var c1 = CONTROL_POINTS[i];
 			var c2 = CONTROL_POINTS[i + 1];
 			var j = i * 4;
-			var start =
-			vertices[j + 0] = new Vector4f(c1.x - h, c1.y + HEIGHT, c1.z, 1);
-			vertices[j + 1] = new Vector4f(c1.x + h, c1.y + HEIGHT, c1.z, 1);
-			vertices[j + 2] = new Vector4f(c2.x - h, c2.y + HEIGHT, c2.z, 1);
-			vertices[j + 3] = new Vector4f(c2.x + h, c2.y + HEIGHT, c2.z, 1);
+			
+			Vector3f dir = new Vector3f(c2.x - c1.x, 0, c2.z - c1.z).normalize();
+			Vector3f perp = new Vector3f(-dir.z, 0, dir.x).mul(h);
+					
+			vertices[j + 0] = new Vector4f(c1.x - perp.x, c1.y + HEIGHT, c1.z - perp.z, 1); //left start
+			vertices[j + 1] = new Vector4f(c1.x + perp.x, c1.y + HEIGHT, c1.z + perp.z, 1); //right start
+			vertices[j + 2] = new Vector4f(c2.x - perp.x, c2.y + HEIGHT, c2.z - perp.z, 1); //left end
+			vertices[j + 3] = new Vector4f(c2.x + perp.x, c2.y + HEIGHT, c2.z + perp.z, 1); //right end
+			
 			normals[j + 0] = new Vector4f(0, 1, 0, 1);
 			normals[j + 1] = new Vector4f(0, 1, 0, 1);
 			normals[j + 2] = new Vector4f(0, 1, 0, 1);
 			normals[j + 3] = new Vector4f(0, 1, 0, 1);
+			
 			uvs[j + 0] = new Vector2f(0, 0);
-			uvs[j + 1] = new Vector2f(h, 0);
-			uvs[j + 2] =  new Vector2f(h, h);
-			uvs[j + 3] = new Vector2f(0, h);
+			uvs[j + 1] = new Vector2f(1, 0);
+			uvs[j + 2] =  new Vector2f(0, 1);
+			uvs[j + 3] = new Vector2f(1, 1);
 		}
-		for (var i = 0; i < vertices.length; i++) {
-			indices[i] = i;
+		var indicess = new int[segmentCount * 6];
+		for (var i = 0; i < segmentCount; i++) {
+		    var j = i * 4;
+		    var k = i * 6;
+		    indicess[k + 0] = j + 0;
+		    indicess[k + 1] = j + 1;
+		    indicess[k + 2] = j + 2;
+		    indicess[k + 3] = j + 1;
+		    indicess[k + 4] = j + 3;
+		    indicess[k + 5] = j + 2;
 		}
 
 		vertexBuffer = GLBuffers.createBuffer(vertices);
 		normalBuffer = GLBuffers.createBuffer(normals);
 		uvBuffer = GLBuffers.createBuffer(uvs);
-		indexBuffer = GLBuffers.createIndexBuffer(indices);
-		indexCount = indices.length;
+		indexBuffer = GLBuffers.createIndexBuffer(indicess);
+		indexCount = indicess.length;
 	}
 
 	@Override
