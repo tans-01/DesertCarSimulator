@@ -31,6 +31,8 @@ public class RenderTextureQuad extends SceneObject {
 	public RenderTextureQuad(int width, int height) {
 		this.shader = ShaderLibrary.instance.compileShader(VERTEX_SHADER, FRAGMENT_SHADER);
 		createQuad();
+		// NB: This doesn't work with MSAA
+		// Making it work with MSAA requires changing/duplicating createRenderTexture & createFrameBuffer to use GL_TEXTURE_2D_MULTISAMPLE instead of GL_TEXTURE_2D
 		renderTexture = TextureLibrary.instance.createRenderTexture(width, height, GL_RGBA);
 		try {
 			frameBuffer = GLBuffers.createFrameBuffer(renderTexture);
