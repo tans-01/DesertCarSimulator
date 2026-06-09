@@ -46,7 +46,7 @@ public class Scene extends SceneObject {
 			car.setParent(desert);
 			light = new Light();
 			{
-				final var seed = 42;
+				final var seed = 2026;
 				final var treeCount = 20;
 				final var spawnBound = Desert.SIZE / 2;
 				final var minSize = 0.75F;

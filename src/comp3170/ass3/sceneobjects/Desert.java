@@ -63,16 +63,16 @@ public class Desert extends SceneObject {
 		};
 
         float[] uvs = {    // i have set this a float you can also keep this a vector but
-                0,    0,   // dont forget to change the uvBuffer = GLBuffers.createBuffer(uvs, GL_FLOAT_VEC2);
-                SIZE, 0,   // right not it specifies the type of the uvs.
-                SIZE, SIZE,
-                0,    SIZE,
-            };
+            0,    0,   // dont forget to change the uvBuffer = GLBuffers.createBuffer(uvs, GL_FLOAT_VEC2);
+            SIZE, 0,   // right not it specifies the type of the uvs.
+            SIZE, SIZE,
+            0,    SIZE,
+        };
 
         int[] indices = {  // indices in the reverse order otherwise culling make it vanish
-        	    0, 2, 1,
-        	    0, 3, 2,
-        	};
+            0, 2, 1,
+            0, 3, 2,
+        };
 
         vertexBuffer = GLBuffers.createBuffer(vertices, GL_FLOAT_VEC4);
         normalBuffer = GLBuffers.createBuffer(normals, GL_FLOAT_VEC4);
