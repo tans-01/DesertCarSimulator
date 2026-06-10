@@ -1,15 +1,13 @@
 package comp3170.ass3.cameras;
 
 import comp3170.InputManager;
-import comp3170.SceneObject;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 import static comp3170.Math.TAU;
 import static org.lwjgl.glfw.GLFW.*;
 
-public class FreeCamera extends SceneObject implements Camera  {
+public class FreeCamera implements Camera  {
 
 	private static final float ASPECT = 1;
 	private static final float FOVY = TAU / 4;

@@ -1,7 +1,6 @@
 package comp3170.ass3.cameras;
 
 import comp3170.InputManager;
-import comp3170.SceneObject;
 import comp3170.ass3.sceneobjects.Scene;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -9,7 +8,7 @@ import org.joml.Vector3f;
 import static comp3170.Math.TAU;
 import static org.lwjgl.glfw.GLFW.*;
 
-public class PerspectiveCamera extends SceneObject implements Camera {
+public class PerspectiveCamera implements Camera {
 
 	private static final float HEIGHT = 2f;
 	static final float PITCH_SPEED = TAU / 4;

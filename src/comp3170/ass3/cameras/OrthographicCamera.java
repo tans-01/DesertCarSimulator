@@ -7,7 +7,7 @@ import org.joml.Vector3f;
 
 import static comp3170.Math.TAU;
 
-public class OrthographicCamera extends SceneObject implements Camera {
+public class OrthographicCamera implements Camera {
 	private static final float WIDTH = 100;
 	private static final float HEIGHT = 100;
 	private static final float ELEVATION = 5;

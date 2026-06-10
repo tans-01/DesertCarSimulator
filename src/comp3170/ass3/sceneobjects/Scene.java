@@ -31,12 +31,12 @@ public class Scene extends SceneObject {
 	final OrthographicCamera mapCamera;
 	final FreeCamera freeCamera;
 	Camera activeCamera;
-	public Light light;
-	public float sunspeed = 1f;
+	public final Light light;
+	public final float SUN_SPEED = 1f;
 
 	public Scene() {
 		theScene = this;
-
+		light = new Light();
 		skybox = new Skybox();
 		skybox.setParent(theScene);
 		try {
@@ -46,7 +46,7 @@ public class Scene extends SceneObject {
 			road.setParent(desert);
 			car = new Car();
 			car.setParent(desert);
-			light = new Light();
+			// Generate trees
 			{
 				final var seed = 2026;
 				final var treeCount = 20;
@@ -72,11 +72,8 @@ public class Scene extends SceneObject {
 		}
 
 		thirdPersonCamera = new PerspectiveCamera();
-		thirdPersonCamera.setParent(theScene);
 		mapCamera = new OrthographicCamera();
-		mapCamera.setParent(theScene);
 		freeCamera = new FreeCamera();
-		freeCamera.setParent(theScene);
 
 		activeCamera = thirdPersonCamera;
 	}
@@ -128,10 +125,10 @@ public class Scene extends SceneObject {
 		skybox.update(windowWidth, windowHeight);
 		
 		if (input.isKeyDown(GLFW_KEY_LEFT_BRACKET)) {
-			light.sunRotation(-sunspeed * deltaTime);
+			light.sunRotation(-SUN_SPEED * deltaTime);
 		}
 		if (input.isKeyDown(GLFW_KEY_RIGHT_BRACKET)) {
-		    light.sunRotation(sunspeed * deltaTime);
+		    light.sunRotation(SUN_SPEED * deltaTime);
 		}
 	}
 

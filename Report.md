@@ -86,6 +86,25 @@ Where requested, meshes should be drawn to scale in model coordinates, including
 * Include a drawing (pen-and-paper or digital) of the scene graph used in your project.
 * Where there are multiple copies of an object at the same point in the graph (e.g. the trees) only a single instance needs to be shown.
 
+```mermaid
+%% This code produces a visual diagram using Mermaid.js
+%% If you can see this code, not the diagram, view this file on GitHub (which renders mermaid diagrams)
+%% Alternatively, paste this code into a mermaid renderer e.g. https://mermaid.live/edit
+flowchart TD
+    Scene -- " Skybox is first in the scene so everything \n else draws over them " --> Skybox("Skybox")
+    Scene ----> Desert("Desert")
+    Desert ----> Road("Road")
+    Desert ----> Car("Car")
+    Car ----> Wheel("Wheel (x4)")
+    Desert --> Tree("Tree \n Individual trees are instanced and data is stored in \n GPU buffers, they have no individual SceneObjects")
+```
+There are a few other things in the `Scene` class that are not SceneObjects and therefore not strictly part of the SceneGraph:
+1. Light
+1. Third Person (Perspective) Camera
+1. Map (Orthographic) Camera
+1. Free (Flight) Debugging Camera
+1. ActiveCamera - points to the currently selected camera (one of the other three cameras)
+
 ## Road Mesh
 
 Illustrate how you construct the road mesh, including:
