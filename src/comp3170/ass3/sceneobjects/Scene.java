@@ -5,6 +5,7 @@ import comp3170.OpenGLException;
 import comp3170.SceneObject;
 import comp3170.ass3.Light;
 import comp3170.ass3.cameras.Camera;
+import comp3170.ass3.cameras.FreeCamera;
 import comp3170.ass3.cameras.OrthographicCamera;
 import comp3170.ass3.cameras.PerspectiveCamera;
 import org.joml.Matrix4f;
@@ -28,6 +29,7 @@ public class Scene extends SceneObject {
 	final Car car;
 	final PerspectiveCamera thirdPersonCamera;
 	final OrthographicCamera mapCamera;
+	final FreeCamera freeCamera;
 	Camera activeCamera;
 	public Light light;
 	public float sunspeed = 1f;
@@ -73,6 +75,8 @@ public class Scene extends SceneObject {
 		thirdPersonCamera.setParent(theScene);
 		mapCamera = new OrthographicCamera();
 		mapCamera.setParent(theScene);
+		freeCamera = new FreeCamera();
+		freeCamera.setParent(theScene);
 
 		activeCamera = thirdPersonCamera;
 	}
@@ -97,6 +101,9 @@ public class Scene extends SceneObject {
 	}
 	
 	public void update(int windowWidth, int windowHeight, InputManager input, float deltaTime) {
+		if (input.wasKeyPressed(GLFW_KEY_0)) {
+			activeCamera = freeCamera;
+		}
 		if (input.wasKeyPressed(GLFW_KEY_1)) {
 			activeCamera = mapCamera;
 		}
