@@ -57,7 +57,8 @@ public class Road extends SceneObject {
 		Vector3f[] curvy = new Vector3f[curvePointCount];
 		for (int i = 0; i < curvePointCount; i++) {
 			float t = (float) i / segmentCount;
-			curvy[i] = bezier(t);
+			Vector3f p = new Vector3f();
+			curvy[i] = bezier(t, p);
 		}
 
 		// compute a perpendicular AT EACH POINT (so edges line up)
@@ -66,7 +67,7 @@ public class Road extends SceneObject {
 			Vector3f prev = curvy[Math.max(i - 1, 0)];
 			Vector3f next = curvy[Math.min(i + 1, curvePointCount - 1)];
 			Vector3f dir = new Vector3f(next.x - prev.x, next.y - prev.y, next.z - prev.z).normalize();
-			curvePointPerpendicularNormals[i] = new Vector3f(-dir.z, dir.y, dir.x);
+			curvePointPerpendicularNormals[i] = dir.set(-dir.z, dir.y, dir.x);
 		}
 
 		// distance for tiling
@@ -222,30 +223,34 @@ public class Road extends SceneObject {
 	}
 
 	//bezier formula B(t) = (1-t)³·P0 + 3(1-t)²·t·P1 + 3(1-t)·t²·P2 + t³·P3
-	private Vector3f bezier(float t) {
+	private Vector3f bezier(float t, Vector3f p) {
 		float u = 1 - t;
 		float b0 = u * u * u;          // (1-t)^3
 		float b1 = 3 * u * u * t;      // 3(1-t)^2 t
 		float b2 = 3 * u * t * t;      // 3(1-t) t^2
 		float b3 = t * t * t;          // t^3
 
-		Vector3f p = new Vector3f();
 		p.x = b0 * CONTROL_POINTS[0].x + b1 * CONTROL_POINTS[1].x + b2 * CONTROL_POINTS[2].x + b3 * CONTROL_POINTS[3].x;
 		p.y = b0 * CONTROL_POINTS[0].y + b1 * CONTROL_POINTS[1].y + b2 * CONTROL_POINTS[2].y + b3 * CONTROL_POINTS[3].y;
 		p.z = b0 * CONTROL_POINTS[0].z + b1 * CONTROL_POINTS[1].z + b2 * CONTROL_POINTS[2].z + b3 * CONTROL_POINTS[3].z;
 		return p;
 	}
 
+	private final Matrix4f modelMatrix = new Matrix4f();
+	private final Vector3f camPos = new Vector3f();
+	private final Vector3f headlightDirection = new Vector3f();
+	private final Vector3f headlightPosition = new Vector3f();
+
 	@Override
 	protected void drawSelf(Matrix4f mvpMatrix) {
 		shader.enable();
 		shader.setUniform("u_mvpMatrix", mvpMatrix);
-		shader.setUniform("u_modelMatrix", getModelToWorldMatrix(new Matrix4f()));
+		shader.setUniform("u_modelMatrix", getModelToWorldMatrix(modelMatrix));
 		shader.setUniform("u_debugNormals", Scene.theScene.debugNormals);
 
 		shader.setUniform("u_daytime", Scene.theScene.daytime);
-		shader.setUniform("u_headlightposition", Scene.theScene.getHeadlightPosition());
-		shader.setUniform("u_spotdirection", Scene.theScene.getHeadlightDirection());
+		shader.setUniform("u_headlightposition", Scene.theScene.getHeadlightPosition(headlightPosition));
+		shader.setUniform("u_spotdirection", Scene.theScene.getHeadlightDirection(headlightDirection));
 
 		//light
 		Light light = Scene.theScene.light;
@@ -254,7 +259,7 @@ public class Road extends SceneObject {
 		shader.setUniform("u_ambientColour", light.getAmbient());
 
 		//spec
-		Vector3f camPos = Scene.theScene.getCamera().getPosition(new Vector3f());
+		Scene.theScene.getCamera().getPosition(camPos);
 		shader.setUniform("u_cameraposition", camPos);
 		shader.setUniform("u_shiny", false);
 

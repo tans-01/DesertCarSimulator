@@ -80,24 +80,28 @@ public class Scene extends SceneObject {
 
 		activeCamera = thirdPersonCamera;
 	}
-	// directio of the headlight 
-	public Vector3f getHeadlightDirection() {
-	    Matrix4f carMatrix = car.getModelToWorldMatrix(new Matrix4f());
+
+	private final Matrix4f carMatrix = new Matrix4f();
+
+	// direction of the headlight
+	public Vector3f getHeadlightDirection(Vector3f headlightDirection) {
+	    car.getModelToWorldMatrix(carMatrix);
 	    //fliping becaue of the flipped car
 	    //carMatrix.scale(-1, 1, 1); 
 	    carMatrix.rotateY((float) Math.TAU / 2);
 
 	    // transform the forward direction (w=0 so translation is ignored)
-	    Vector3f forward = new Vector3f(0, -0.3f, 1);
-	    return carMatrix.transformDirection(forward, new Vector3f()).normalize();
+		headlightDirection.set(0, -0.3f, 1);
+	    return carMatrix.transformDirection(headlightDirection).normalize();
 	}
-	// poistion of the headlight on the car
-	public Vector3f getHeadlightPosition() {
-	    Vector3f local = new Vector3f(0, 0.93f, 2.1f); // headlight on the car space
-	    Matrix4f carMatrix = car.getModelToWorldMatrix(new Matrix4f());
+	// position of the headlight on the car
+	public Vector3f getHeadlightPosition(Vector3f headlightPosition) {
+		// headlight on the car space
+		headlightPosition.set(0, 0.93f, 2.1f);
+	    car.getModelToWorldMatrix(carMatrix);
 	    //carMatrix.scale(-1, 1, 1);
 	    carMatrix.rotateY((float) Math.TAU / 2);
-	    return carMatrix.transformPosition(local, new Vector3f()); // position in the world space
+	    return carMatrix.transformPosition(headlightPosition); // position in the world space
 	}
 	
 	public void update(int windowWidth, int windowHeight, InputManager input, float deltaTime) {
@@ -124,10 +128,10 @@ public class Scene extends SceneObject {
 		skybox.update(windowWidth, windowHeight);
 		
 		if (input.isKeyDown(GLFW_KEY_LEFT_BRACKET)) {
-			light.sunRotaion(-sunspeed * deltaTime);
+			light.sunRotation(-sunspeed * deltaTime);
 		}
 		if (input.isKeyDown(GLFW_KEY_RIGHT_BRACKET)) {
-		    light.sunRotaion(sunspeed * deltaTime);  
+		    light.sunRotation(sunspeed * deltaTime);
 		}
 	}
 

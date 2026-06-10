@@ -81,16 +81,21 @@ public class Desert extends SceneObject {
         indexCount = indices.length;
     }
 
+    private final Matrix4f modelMatrix = new Matrix4f();
+    private final Vector3f camPos = new Vector3f();
+    private final Vector3f headlightDirection = new Vector3f();
+    private final Vector3f headlightPosition = new Vector3f();
+
     @Override
     protected void drawSelf(Matrix4f mvpMatrix) {
         shader.enable();
         shader.setUniform("u_mvpMatrix", mvpMatrix);
-        shader.setUniform("u_modelMatrix", getModelToWorldMatrix(new Matrix4f()));
+        shader.setUniform("u_modelMatrix", getModelToWorldMatrix(modelMatrix));
         shader.setUniform("u_debugNormals", Scene.theScene.debugNormals);
         
         shader.setUniform("u_daytime", Scene.theScene.daytime);
-        shader.setUniform("u_headlightposition", Scene.theScene.getHeadlightPosition());
-        shader.setUniform("u_spotdirection", Scene.theScene.getHeadlightDirection());
+        shader.setUniform("u_headlightposition", Scene.theScene.getHeadlightPosition(headlightPosition));
+        shader.setUniform("u_spotdirection", Scene.theScene.getHeadlightDirection(headlightDirection));
         
         //light
         Light light = Scene.theScene.light;
@@ -99,7 +104,7 @@ public class Desert extends SceneObject {
         shader.setUniform("u_ambientColour", light.getAmbient());
         
         //spec
-        Vector3f camPos = Scene.theScene.getCamera().getPosition(new Vector3f());
+        Scene.theScene.getCamera().getPosition(camPos);
         shader.setUniform("u_cameraposition", camPos);
         shader.setUniform("u_shiny", false);
         

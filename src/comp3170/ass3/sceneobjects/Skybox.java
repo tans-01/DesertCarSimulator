@@ -124,11 +124,9 @@ public class Skybox extends SceneObject {
 		}		
 	}
 
-	final Matrix4f cameraMatrix = new Matrix4f();
 	final Matrix4f viewMatrix = new Matrix4f();
 	final Matrix4f projectionMatrix = new Matrix4f();
 	final Matrix4f mvpMatrix = new Matrix4f();
-	final Vector4f origin = new Vector4f(0,0,0,1);
 
 	public void update(int windowWidth, int windowHeight) {
 		this.windowWidth = windowWidth;

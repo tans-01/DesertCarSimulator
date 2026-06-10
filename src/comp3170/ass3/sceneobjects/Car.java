@@ -1,40 +1,23 @@
 package comp3170.ass3.sceneobjects;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glDrawElements;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13.glActiveTexture;
-import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL11.glFrontFace;
-import static org.lwjgl.opengl.GL11.GL_CW;
-import static org.lwjgl.opengl.GL11.GL_CCW;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-
-import comp3170.GLBuffers;
-import comp3170.InputManager;
-import comp3170.OpenGLException;
-import comp3170.SceneObject;
-import comp3170.Shader;
-import comp3170.ShaderLibrary;
-import comp3170.TextureLibrary;
+import comp3170.*;
 import comp3170.ass3.Light;
 import comp3170.ass3.TextureUtils;
 import comp3170.ass3.models.Mesh;
 import comp3170.ass3.models.ObjData;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.Math;
+
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
+import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
 public class Car extends SceneObject {
 
     private static final String VERT_SHADER = "simple.vert";
@@ -177,6 +160,11 @@ public class Car extends SceneObject {
         return v;
     }
 
+    private final Matrix4f modelMatrix = new Matrix4f();
+    private final Vector3f camPos = new Vector3f();
+    private final Vector3f headlightDirection = new Vector3f();
+    private final Vector3f headlightPosition = new Vector3f();
+
     @Override
     protected void drawSelf(Matrix4f mvpMatrix, int pass) {
       
@@ -184,7 +172,7 @@ public class Car extends SceneObject {
         mvpMatrix.rotateY((float) Math.TAU / 2);
 
         // building the model matrix, so normals match positions
-        Matrix4f modelMatrix = getModelToWorldMatrix(new Matrix4f());
+        getModelToWorldMatrix(modelMatrix);
         modelMatrix.scale(-1, 1, 1);
         modelMatrix.rotateY((float) Math.TAU / 2);
 
@@ -195,8 +183,8 @@ public class Car extends SceneObject {
         shader.setUniform("u_debugNormals", Scene.theScene.debugNormals);
         
         shader.setUniform("u_daytime", Scene.theScene.daytime);
-        shader.setUniform("u_headlightposition", Scene.theScene.getHeadlightPosition());
-        shader.setUniform("u_spotdirection", Scene.theScene.getHeadlightDirection());
+        shader.setUniform("u_headlightposition", Scene.theScene.getHeadlightPosition(headlightPosition));
+        shader.setUniform("u_spotdirection", Scene.theScene.getHeadlightDirection(headlightDirection));
         
         //light
         Light light = Scene.theScene.light;
@@ -204,7 +192,7 @@ public class Car extends SceneObject {
         shader.setUniform("u_lightColour", light.getColour());
         shader.setUniform("u_ambientColour", light.getAmbient());
         
-        Vector3f camPos = Scene.theScene.getCamera().getPosition(new Vector3f());
+        Scene.theScene.getCamera().getPosition(camPos);
         shader.setUniform("u_cameraposition", camPos);
         
         glActiveTexture(GL_TEXTURE0);

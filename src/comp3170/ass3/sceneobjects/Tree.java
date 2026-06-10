@@ -56,6 +56,10 @@ public class Tree extends SceneObject {
 		matrixBuffer = GLBuffers.createBuffer(matrices);
 	}
 
+	private final Vector3f camPos = new Vector3f();
+	private final Vector3f headlightDirection = new Vector3f();
+	private final Vector3f headlightPosition = new Vector3f();
+
 	protected void drawSelf(Matrix4f mvpMatrix) {
 		shader.enable();
 		shader.setUniform("u_mvpMatrix", mvpMatrix);
@@ -67,8 +71,8 @@ public class Tree extends SceneObject {
 		shader.setUniform("u_debugNormals", Scene.theScene.debugNormals);
 
 		shader.setUniform("u_daytime", Scene.theScene.daytime);
-		shader.setUniform("u_headlightposition", Scene.theScene.getHeadlightPosition());
-		shader.setUniform("u_spotdirection", Scene.theScene.getHeadlightDirection());
+		shader.setUniform("u_headlightposition", Scene.theScene.getHeadlightPosition(headlightPosition));
+		shader.setUniform("u_spotdirection", Scene.theScene.getHeadlightDirection(headlightDirection));
 
 		//light
 		Light light = Scene.theScene.light;
@@ -77,7 +81,7 @@ public class Tree extends SceneObject {
 		shader.setUniform("u_ambientColour", light.getAmbient());
 
 		//spec
-		Vector3f camPos = Scene.theScene.getCamera().getPosition(new Vector3f());
+		Scene.theScene.getCamera().getPosition(camPos);
 		shader.setUniform("u_cameraposition", camPos);
 		shader.setUniform("u_shiny", false);
 
