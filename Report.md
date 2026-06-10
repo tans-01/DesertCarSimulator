@@ -329,5 +329,23 @@ cone), i.e. S · D ≥ cos 30°. Intensity falls off with distance as I = Imax·
 ## Camera 
 
 * Illustrate the viewport and scissor rectangle for the Map camera for a window with resolution 800x600 pixels. Label the corners of each rectangle with coordinates in screen space, NDC, World and Viewport coordinates.
+![ReportMapCamera.png](./Images/ReportMapCamera.png)
 
 * Illustrate how you calculate the position and view volume of the Third-Person camera.
+
+```mermaid
+%% This code produces a visual diagram using Mermaid.js
+%% If you can see this code, not the diagram, view this file on GitHub (which renders mermaid diagrams)
+%% Alternatively, paste this code into a mermaid renderer e.g. https://mermaid.live/edit
+flowchart TD
+    carMatrix("Car matrix \n position + heading of car in world")
+    carMatrix ----> rotateY("rotateY(rotationRadians) \n orbit left/right \n range 0..2pi")
+    rotateY ----> translate("translate(0, 5, dollyMeters) \n +5 m up \n dollyMeters back/away \n range 1..20m ")
+    translate ----> rotateX("rotateX(pitchRadians) \n tilt view up/down (down by default) \n range −90..+90 degrees")
+    rotateX ----> cameraMatrix("cameraMatrix \n world-space position and orientation of camera")
+    cameraMatrix ----> viewMatrix("getViewMatrix \n viewMatrix = cameraMatrix.inverse() \n transforms world coords into camera space")
+    viewMatrix --> mvpMatrix("mvpMatrix = projMatrix * viewMatrix \n passed to every shader as u_mvpMatrix")
+    projMatrix("getProjectionMatrix \n projMatrix = setPerspective(fovZoom, aspect, 0.1, 500) \n range 5..120 degrees")
+    projMatrix --> mvpMatrix
+```
+![ReportThirdPersonCamera.png](./Images/ReportThirdPersonCamera.png)
