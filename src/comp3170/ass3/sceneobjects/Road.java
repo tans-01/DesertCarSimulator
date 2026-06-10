@@ -30,7 +30,6 @@ public class Road extends SceneObject {
 	};
 	private static final float WIDTH = 8;
 	private static final float HEIGHT = 0.1F;
-	private static final float SLOPE = (float) Math.toRadians(45);
 
 	final Shader shader;
 	final int vertexBuffer;
@@ -45,99 +44,196 @@ public class Road extends SceneObject {
 		texture = TextureLibrary.instance.loadTexture(TEXTURE);
 		TextureUtils.setupTexture(texture);
 
-
-		
-		
-		
-		var h = WIDTH / 2;
-		
-		int SMOOTH = 20;
-		int pointcount = SMOOTH + 1;
-		var segmentCount = SMOOTH;
-		var vertices = new Vector4f[segmentCount * 4];
-		var normals = new Vector4f[vertices.length];
+		int segmentCount = 20;
+		int curvePointCount = segmentCount + 1;
+		var verticesPerQuad = 6;
+		var uniqueVerticesPerQuad = 4;
+		// 1 quad for road, 1 quad for each side slope (2)
+		var quadCount = 3;
+		var uniqueVerticesPerSegment = quadCount * uniqueVerticesPerQuad;
+		var vertices = new Vector4f[segmentCount * uniqueVerticesPerSegment];
 		var uvs = new Vector2f[vertices.length];
-		
-		
-		Vector3f[] curvy = new Vector3f[pointcount];
-		for (int i = 0; i < pointcount; i++) {
-		    float t = (float) i / SMOOTH;
-		    curvy[i] = bezier(t);
+
+		Vector3f[] curvy = new Vector3f[curvePointCount];
+		for (int i = 0; i < curvePointCount; i++) {
+			float t = (float) i / segmentCount;
+			curvy[i] = bezier(t);
 		}
 
 		// compute a perpendicular AT EACH POINT (so edges line up)
-		Vector3f[] perp = new Vector3f[pointcount];
-		for (int i = 0; i < pointcount; i++) {
-		    Vector3f prev = curvy[Math.max(i - 1, 0)];
-		    Vector3f next = curvy[Math.min(i + 1, pointcount - 1)];
-		    Vector3f dir = new Vector3f(next.x - prev.x, 0, next.z - prev.z).normalize();
-		    perp[i] = new Vector3f(-dir.z, 0, dir.x).mul(h);
+		Vector3f[] curvePointPerpendicularNormals = new Vector3f[curvePointCount];
+		for (int i = 0; i < curvePointCount; i++) {
+			Vector3f prev = curvy[Math.max(i - 1, 0)];
+			Vector3f next = curvy[Math.min(i + 1, curvePointCount - 1)];
+			Vector3f dir = new Vector3f(next.x - prev.x, next.y - prev.y, next.z - prev.z).normalize();
+			curvePointPerpendicularNormals[i] = new Vector3f(-dir.z, dir.y, dir.x);
 		}
 
 		// distance for tiling
-		float[] dist = new float[pointcount];
+		float[] dist = new float[curvePointCount];
 		dist[0] = 0;
-		for (int i = 1; i < pointcount; i++) {
-		    dist[i] = dist[i - 1] + curvy[i].distance(curvy[i - 1]);
+		for (int i = 1; i < curvePointCount; i++) {
+			dist[i] = dist[i - 1] + curvy[i].distance(curvy[i - 1]);
 		}
-		float TILE = 0.1f;
+		// How many times it tiles inside a single quad, 1/10 looks good
+		float tile = 0.1f;
 
-		// each point uses ITS OWN perp, so shared edges match
-		for (int i = 0; i < segmentCount; i++) {
-		    Vector3f c1 = curvy[i];
-		    Vector3f c2 = curvy[i + 1];
-		    Vector3f p1 = perp[i];       // perpendicular at start point
-		    Vector3f p2 = perp[i + 1];   // perpendicular at end point
-		    int j = i * 4;
+		var roadWidth = WIDTH;
+		// Horizontal extent of the angled slope
+		// By having the sides extend out by HEIGHT, both edges of the side angle are HEIGHT and we get a 45 degree angle
+		var slopeWidth = HEIGHT;
+		// Length of the slope of the slope (actual distance, used for texturing)
+		var slopeHypotenuseLength = slopeWidth * (float) Math.sqrt(2);
+		// Full width is the width including the slope sections
+		var totalWidth = roadWidth + slopeWidth * 2F;
+		var halfRoadWidth = roadWidth / 2F;
+		var halfTotalWidth = totalWidth / 2F;
 
-		    vertices[j + 0] = new Vector4f(c1.x - p1.x, c1.y + HEIGHT, c1.z - p1.z, 1);
-		    vertices[j + 1] = new Vector4f(c1.x + p1.x, c1.y + HEIGHT, c1.z + p1.z, 1);
-		    vertices[j + 2] = new Vector4f(c2.x - p2.x, c2.y + HEIGHT, c2.z - p2.z, 1);
-		    vertices[j + 3] = new Vector4f(c2.x + p2.x, c2.y + HEIGHT, c2.z + p2.z, 1);
+		// UV proportions
+		// fraction of texture the slope occupies
+		var slopeProportion = slopeHypotenuseLength / totalWidth;
+		var roadTexStart = 0F + slopeProportion;
+		var roadTexEnd = 001F - slopeProportion;
 
-		    normals[j + 0] = new Vector4f(0, 1, 0, 0);
-		    normals[j + 1] = new Vector4f(0, 1, 0, 0);
-		    normals[j + 2] = new Vector4f(0, 1, 0, 0);
-		    normals[j + 3] = new Vector4f(0, 1, 0, 0);
+		// each point uses ITS OWN perpendicular, so shared edges match
+		for (int segmentIndex = 0; segmentIndex < segmentCount; segmentIndex++) {
+			Vector3f c1 = curvy[segmentIndex];
+			Vector3f c2 = curvy[segmentIndex + 1];
+			Vector3f p1 = curvePointPerpendicularNormals[segmentIndex];       // perpendicular at start point
+			Vector3f p2 = curvePointPerpendicularNormals[segmentIndex + 1];   // perpendicular at end point
+			int j = segmentIndex * uniqueVerticesPerSegment;
 
-		    float v1 = dist[i] * TILE;
-		    float v2 = dist[i + 1] * TILE;
-		    uvs[j + 0] = new Vector2f(v1, 0);   
-		    uvs[j + 1] = new Vector2f(v1, 1);
-		    uvs[j + 2] = new Vector2f(v2, 0);
-		    uvs[j + 3] = new Vector2f(v2, 1);
+			float texV1 = dist[segmentIndex] * tile;
+			float texV2 = dist[segmentIndex + 1] * tile;
+
+			// Road quad
+			{
+				var quadIndex = 0;
+				var indexOfFirstVertex = j + quadIndex * uniqueVerticesPerQuad;
+
+				vertices[indexOfFirstVertex + 0] = new Vector4f(c1.x - p1.x * halfRoadWidth, c1.y + HEIGHT, c1.z - p1.z * halfRoadWidth, 1);
+				vertices[indexOfFirstVertex + 1] = new Vector4f(c1.x + p1.x * halfRoadWidth, c1.y + HEIGHT, c1.z + p1.z * halfRoadWidth, 1);
+				vertices[indexOfFirstVertex + 2] = new Vector4f(c2.x - p2.x * halfRoadWidth, c2.y + HEIGHT, c2.z - p2.z * halfRoadWidth, 1);
+				vertices[indexOfFirstVertex + 3] = new Vector4f(c2.x + p2.x * halfRoadWidth, c2.y + HEIGHT, c2.z + p2.z * halfRoadWidth, 1);
+
+				uvs[indexOfFirstVertex + 0] = new Vector2f(texV1, roadTexStart);
+				uvs[indexOfFirstVertex + 1] = new Vector2f(texV1, roadTexEnd);
+				uvs[indexOfFirstVertex + 2] = new Vector2f(texV2, roadTexStart);
+				uvs[indexOfFirstVertex + 3] = new Vector2f(texV2, roadTexEnd);
+			}
+
+			// Slope quad 1
+			{
+				var quadIndex = 1;
+				var indexOfFirstVertex = j + quadIndex * uniqueVerticesPerQuad;
+
+				vertices[indexOfFirstVertex + 0] = new Vector4f(c1.x + p1.x * halfRoadWidth, c1.y + HEIGHT, c1.z + p1.z * halfRoadWidth, 1);
+				vertices[indexOfFirstVertex + 1] = new Vector4f(c1.x + p1.x * halfTotalWidth, c1.y, c1.z + p1.z * halfTotalWidth, 1);
+				vertices[indexOfFirstVertex + 2] = new Vector4f(c2.x + p2.x * halfRoadWidth, c1.y + HEIGHT, c2.z + p2.z * halfRoadWidth, 1);
+				vertices[indexOfFirstVertex + 3] = new Vector4f(c2.x + p2.x * halfTotalWidth, c1.y, c2.z + p2.z * halfTotalWidth, 1);
+
+				uvs[indexOfFirstVertex + 0] = new Vector2f(texV1, roadTexEnd);
+				uvs[indexOfFirstVertex + 1] = new Vector2f(texV1, 1);
+				uvs[indexOfFirstVertex + 2] = new Vector2f(texV2, roadTexEnd);
+				uvs[indexOfFirstVertex + 3] = new Vector2f(texV2, 1);
+			}
+
+			// Slope quad 2
+			{
+				var quadIndex = 2;
+				var indexOfFirstVertex = j + quadIndex * uniqueVerticesPerQuad;
+
+				vertices[indexOfFirstVertex + 1] = new Vector4f(c1.x - p1.x * halfRoadWidth, c1.y + HEIGHT, c1.z - p1.z * halfRoadWidth, 1);
+				vertices[indexOfFirstVertex + 0] = new Vector4f(c1.x - p1.x * halfTotalWidth, c1.y, c1.z - p1.z * halfTotalWidth, 1);
+				vertices[indexOfFirstVertex + 3] = new Vector4f(c2.x - p2.x * halfRoadWidth, c1.y + HEIGHT, c2.z - p2.z * halfRoadWidth, 1);
+				vertices[indexOfFirstVertex + 2] = new Vector4f(c2.x - p2.x * halfTotalWidth, c1.y, c2.z - p2.z * halfTotalWidth, 1);
+
+				uvs[indexOfFirstVertex + 0] = new Vector2f(texV1, 0);
+				uvs[indexOfFirstVertex + 1] = new Vector2f(texV1, roadTexStart);
+				uvs[indexOfFirstVertex + 2] = new Vector2f(texV2, 0);
+				uvs[indexOfFirstVertex + 3] = new Vector2f(texV2, roadTexStart);
+			}
 		}
-		var indicess = new int[segmentCount * 6];
-		for (var i = 0; i < segmentCount; i++) {
-		    var j = i * 4;
-		    var k = i * 6;
-		    indicess[k + 0] = j + 0;
-		    indicess[k + 1] = j + 1;
-		    indicess[k + 2] = j + 2;
-		    indicess[k + 3] = j + 1;
-		    indicess[k + 4] = j + 3;
-		    indicess[k + 5] = j + 2;
+
+		// For each quad (4 unique vertices) make normals
+		var normals = new Vector4f[vertices.length];
+		var e0 = new Vector3f();
+		var e1 = new Vector3f();
+		var e2 = new Vector3f();
+		var e3 = new Vector3f();
+		var n1 = new Vector3f();
+		var n2 = new Vector3f();
+		var n_v0 = new Vector3f();
+		var n_v1 = new Vector3f();
+		var n_v2 = new Vector3f();
+		var n_v3 = new Vector3f();
+		for (var segmentIndex = 0; segmentIndex < segmentCount; segmentIndex++) {
+			for (var quadIndex = 0; quadIndex < quadCount; quadIndex++) {
+				var indexOfFirstVertexOfQuad = (segmentIndex + (quadIndex * segmentCount)) * uniqueVerticesPerQuad;
+
+				var v0 = vertices[indexOfFirstVertexOfQuad + 0];
+				var v1 = vertices[indexOfFirstVertexOfQuad + 1];
+				var v2 = vertices[indexOfFirstVertexOfQuad + 2];
+				var v3 = vertices[indexOfFirstVertexOfQuad + 3];
+
+				// Triangle 1: v0, v1, v2, compute edges
+				e0.set(v1.x - v0.x, v1.y - v0.y, v1.z - v0.z);
+				e1.set(v2.x - v0.x, v2.y - v0.y, v2.z - v0.z);
+				n1.set(e0).cross(e1).normalize();
+
+				// Triangle 2: v1, v3, v2, compute edges
+				e2.set(v3.x - v1.x, v3.y - v1.y, v3.z - v1.z);
+				e3.set(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z);
+				n2.set(e2).cross(e3).normalize();
+
+				n_v0.set(n1).normalize();
+				n_v1.set(n1).add(n2).normalize();
+				n_v2.set(n1).add(n2).normalize();
+				n_v3.set(n2).normalize();
+
+				normals[indexOfFirstVertexOfQuad + 0] = new Vector4f(n_v0, 0);
+				normals[indexOfFirstVertexOfQuad + 1] = new Vector4f(n_v1, 0);
+				normals[indexOfFirstVertexOfQuad + 2] = new Vector4f(n_v2, 0);
+				normals[indexOfFirstVertexOfQuad + 3] = new Vector4f(n_v3, 0);
+			}
+		}
+
+		// For each quad (4 unique vertices) make 2 triangles (6 vertices, 2 shared)
+		var indices = new int[segmentCount * quadCount * verticesPerQuad];
+		for (var segmentIndex = 0; segmentIndex < segmentCount; segmentIndex++) {
+			for (var quadIndex = 0; quadIndex < quadCount; quadIndex++) {
+				// [segment][quad] * (4 | 6)
+				var indexOfFirstVertexOfQuad = (segmentIndex + (quadIndex * segmentCount)) * uniqueVerticesPerQuad;
+				var indexOfFirstVertexOfTriangles = (segmentIndex + (quadIndex * segmentCount)) * verticesPerQuad;
+				indices[indexOfFirstVertexOfTriangles + 0] = indexOfFirstVertexOfQuad + 0;
+				indices[indexOfFirstVertexOfTriangles + 1] = indexOfFirstVertexOfQuad + 1;
+				indices[indexOfFirstVertexOfTriangles + 2] = indexOfFirstVertexOfQuad + 2;
+				indices[indexOfFirstVertexOfTriangles + 3] = indexOfFirstVertexOfQuad + 1;
+				indices[indexOfFirstVertexOfTriangles + 4] = indexOfFirstVertexOfQuad + 3;
+				indices[indexOfFirstVertexOfTriangles + 5] = indexOfFirstVertexOfQuad + 2;
+			}
 		}
 
 		vertexBuffer = GLBuffers.createBuffer(vertices);
 		normalBuffer = GLBuffers.createBuffer(normals);
 		uvBuffer = GLBuffers.createBuffer(uvs);
-		indexBuffer = GLBuffers.createIndexBuffer(indicess);
-		indexCount = indicess.length;
+		indexBuffer = GLBuffers.createIndexBuffer(indices);
+		indexCount = indices.length;
 	}
+
 	//bezier formula B(t) = (1-t)³·P0 + 3(1-t)²·t·P1 + 3(1-t)·t²·P2 + t³·P3
 	private Vector3f bezier(float t) {
-	    float u = 1 - t;
-	    float b0 = u * u * u;          // (1-t)^3
-	    float b1 = 3 * u * u * t;      // 3(1-t)^2 t
-	    float b2 = 3 * u * t * t;      // 3(1-t) t^2
-	    float b3 = t * t * t;          // t^3
+		float u = 1 - t;
+		float b0 = u * u * u;          // (1-t)^3
+		float b1 = 3 * u * u * t;      // 3(1-t)^2 t
+		float b2 = 3 * u * t * t;      // 3(1-t) t^2
+		float b3 = t * t * t;          // t^3
 
-	    Vector3f p = new Vector3f();
-	    p.x = b0*CONTROL_POINTS[0].x + b1*CONTROL_POINTS[1].x + b2*CONTROL_POINTS[2].x + b3*CONTROL_POINTS[3].x;
-	    p.y = b0*CONTROL_POINTS[0].y + b1*CONTROL_POINTS[1].y + b2*CONTROL_POINTS[2].y + b3*CONTROL_POINTS[3].y;
-	    p.z = b0*CONTROL_POINTS[0].z + b1*CONTROL_POINTS[1].z + b2*CONTROL_POINTS[2].z + b3*CONTROL_POINTS[3].z;
-	    return p;
+		Vector3f p = new Vector3f();
+		p.x = b0 * CONTROL_POINTS[0].x + b1 * CONTROL_POINTS[1].x + b2 * CONTROL_POINTS[2].x + b3 * CONTROL_POINTS[3].x;
+		p.y = b0 * CONTROL_POINTS[0].y + b1 * CONTROL_POINTS[1].y + b2 * CONTROL_POINTS[2].y + b3 * CONTROL_POINTS[3].y;
+		p.z = b0 * CONTROL_POINTS[0].z + b1 * CONTROL_POINTS[1].z + b2 * CONTROL_POINTS[2].z + b3 * CONTROL_POINTS[3].z;
+		return p;
 	}
 
 	@Override
