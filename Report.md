@@ -112,9 +112,36 @@ Illustrate how you construct the road mesh, including:
 * normals
 * construction into triangles in the index buffer
 
+Vertices:
+1. The Bézier curve is sampled at a number of points
+2. The road is made up of a number of segments (a start point and the following end point on the Bézier curve)
+3. For each segment, perpendicular normal vectors are generated (pictured)
+4. For each segment, a road quad is generated from the start point to the end point, with vertices extended/extruded by half the road width laterally on each side along the perpendicular normal, creating a quad spanning the whole segment
+5. Using similar extrusion, quads for the slopes on either side are added
+![ReportRoadPerpendiculars.png](./Images/ReportRoadPerpendiculars.png)
+![ReportRoadQuads.png](./Images/ReportRoadQuads.png)
+
+Normals:
+1. Normals for the road top are trivial, they point directly up, and were originally hardcoded. 
+2. Normals for the slopes are more involved, as the quads aren't pointing directly on 1 axis. 
+3. Therefore, all normals are automatically calculated:
+4. Each quad is split into two triangles along the v1-v2 diagonal. 
+5. For each triangle, two edge vectors are computed from a shared corner. 
+6. The cross product of two edge vectors produces the triangle normal. 
+7. The corner vertices (v0, v3) each belong to only one triangle, so they take that triangle's normal directly. 
+8. The shared vertices (v1, v2) each belong to both triangles, so the normals are averaged together, so that if the quad was bent (they aren't in this case though), lighting would still be smooth over the bend.
+
+Indexing:
+1. The vertices are stored in an array that can be though of as being indexed in two dimensions `[segment][quad]`. 
+2. Indexing is done by stepping through every four vertices (single quad) and adding six indices (two triangles). 
+3. Vertices between quads are not shared, even though there are vertices with the same position as vertices in other quads, as the UVs differ. 
+4. Each segment has 12 unique vertices (3 quads * 4 vertices per quad).
+![ReportRoadNormalsAndIndexing.png](./Images/ReportRoadNormalsAndIndexing.png)
+
+
 ## Lighting
 
-All lighting is computed per-fragment in `simple.frag` using the world-space surface
+All lighting is computed per-fragment in `simple.frag` (and `instanced_fragment.glsl` for the Trees) using the world-space surface
 normal from the vertex shader, following the Phong model (ambient + diffuse + specular).
 Day / Night modes are toggled with `3` and select which light is active. Texture
 colours are decoded to linear (`pow(colour, 2.2)`) before lighting and the final result

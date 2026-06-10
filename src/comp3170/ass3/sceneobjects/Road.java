@@ -162,8 +162,8 @@ public class Road extends SceneObject {
 		var e1 = new Vector3f();
 		var e2 = new Vector3f();
 		var e3 = new Vector3f();
-		var n1 = new Vector3f();
-		var n2 = new Vector3f();
+		var triangle1Normal = new Vector3f();
+		var triangle2Normal = new Vector3f();
 		var n_v0 = new Vector3f();
 		var n_v1 = new Vector3f();
 		var n_v2 = new Vector3f();
@@ -180,17 +180,17 @@ public class Road extends SceneObject {
 				// Triangle 1: v0, v1, v2, compute edges
 				e0.set(v1.x - v0.x, v1.y - v0.y, v1.z - v0.z);
 				e1.set(v2.x - v0.x, v2.y - v0.y, v2.z - v0.z);
-				n1.set(e0).cross(e1).normalize();
+				triangle1Normal.set(e0).cross(e1).normalize();
 
 				// Triangle 2: v1, v3, v2, compute edges
 				e2.set(v3.x - v1.x, v3.y - v1.y, v3.z - v1.z);
 				e3.set(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z);
-				n2.set(e2).cross(e3).normalize();
+				triangle2Normal.set(e2).cross(e3).normalize();
 
-				n_v0.set(n1).normalize();
-				n_v1.set(n1).add(n2).normalize();
-				n_v2.set(n1).add(n2).normalize();
-				n_v3.set(n2).normalize();
+				n_v0.set(triangle1Normal).normalize();
+				n_v1.set(triangle1Normal).add(triangle2Normal).normalize();
+				n_v2.set(triangle1Normal).add(triangle2Normal).normalize();
+				n_v3.set(triangle2Normal).normalize();
 
 				normals[indexOfFirstVertexOfQuad + 0] = new Vector4f(n_v0, 0);
 				normals[indexOfFirstVertexOfQuad + 1] = new Vector4f(n_v1, 0);
