@@ -297,7 +297,7 @@ angle grows, the test "angle ≤ 30°" becomes:
     point is lit  ⇔  S · D ≥ cos(30°)
 
 If this holds, the point is inside the cone and is lit; otherwise its direct
-contribution is set to zero.
+contribution is set to zero..
 
 **Distance falloff.** For points inside the cone, the intensity decreases with
 distance **d** from the headlight, following the specified equation:
