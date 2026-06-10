@@ -45,10 +45,10 @@ Complete the table below indicating the features you have attempted. This will b
 | - Mesh & normals                    | YES       |
 | - UVs & texture                     | YES       |
 | Road                                |           |
-| - Mesh & normals                    | YES / NO  |
-| - Bezier mesh (*Challenge*)         | YES / NO  |
-| - UVs & texturing                   | YES / NO  |
-| Trees                               | YES / NO  |
+| - Mesh & normals                    | YES 	  |
+| - Bezier mesh (*Challenge*)         | YES 	  |
+| - UVs & texturing                   | YES 	  |
+| Trees                               | YES 	  |
 | Car                                 |           |
 | - Meshes & normals                  | YES       |
 | - UVs & Textures                    | YES       |
@@ -94,6 +94,51 @@ Illustrate how you construct the road mesh, including:
 * construction into triangles in the index buffer
 
 ## Lighting
+
+All lighting is computed per-fragment in `simple.frag` using the world-space surface
+normal from the vertex shader, following the Phong model (ambient + diffuse + specular).
+Day / Night modes are toggled with `3` and select which light is active. Texture
+colours are decoded to linear (`pow(colour, 2.2)`) before lighting and the final result
+is gamma-encoded (`pow(result, 1/2.2)`) for display.
+ 
+---
+ 
+## 1. Day – Diffuse & Ambient for a point on the car
+ 
+During the day the scene is lit by a **directional light** representing the sun. It is
+infinitely far away, so its rays are parallel and it is described by a single direction
+shared by the whole scene (a direction only, no position).
+ 
+A point on the car is lit by an **ambient** term plus a **diffuse** term.
+ 
+The **diffuse** term measures how directly the surface faces the sun, using the dot
+product of the unit surface normal **N** and the unit direction to the light **L**,
+clamped to be non-negative:
+ 
+    diffuse = max(0, N · L)
+ 
+Since N and L are unit vectors, N · L = cos θ, where θ is the angle between them. A car
+panel facing the sun (θ = 0°) is fully lit; as it turns away the value drops; once it
+faces away, max(0, …) clamps it to 0. Unlike the flat desert, a point on the car has a
+normal N that points in whatever direction that panel faces (the bonnet up-and-forward, a
+door sideways, etc.), so different panels receive different light — this is what makes the
+car read as a 3-D shape. As the car drives and turns, each panel's normal changes relative
+to the fixed sun direction, so panels brighten and darken.
+ 
+The **ambient** term is a constant colour added everywhere regardless of orientation,
+approximating scattered skylight so unlit panels are not pure black. The ambient intensity
+is **(0.25, 0.25, 0.25)**, chosen so shadowed panels stay faintly visible.
+ 
+The terms are summed and multiply the (linear) texture colour:
+ 
+    lighting    = ambient + lightColour · max(0, N · L)
+    finalColour = textureColour · lighting
+ 
+(The car body also adds the specular)
+ 
+**Third-person camera:** diffuse and ambient are view-independent — they depend only on
+the panel's normal and the sun direction, not the camera. A given car point looks the same
+brightness from any third-person camera position.
 Provide appropriate diagrams as well as the relevant equations used in the calculation of the following cases. Assume a third-person camera is used in each.
 
 * The day-time diffuse and ambient lighting values for a point on the car.

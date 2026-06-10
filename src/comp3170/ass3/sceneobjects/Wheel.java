@@ -7,8 +7,6 @@ import comp3170.ass3.models.Mesh;
 import comp3170.ass3.models.ObjData;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import comp3170.ass3.Light;
-import comp3170.ass3.sceneobjects.Scene;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.Math;
