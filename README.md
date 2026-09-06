@@ -1,409 +1,351 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/lGnNtPZW)
-# 2026 Session 1 – COMP3170: Computer Graphics
-## Assessment Task 3: 3D Interactive Visualisation
-
-| Submission details					|    | 
-| --------------------------------------| -- |
-| Due Date 								| 11:59pm, Jun 7 2026, Week 13 |
-| Weighting								| Assessment will be marked out of a total of 100 marks. This assessment will contribute to 40% of overall unit grade. |
-| Time to complete						| This assessment will take approximately 30 hours per person to complete. |
-| Length & Format						| Java Source code and Markdown Report |
-| Late Penalties						| Standard late penalty applies. |
-| How to Submit 						| Java source and report via GitHub Classroom. Peer assessment via iLearn. |
-| Return of Assessment Grade & Feedback	| Grades will be returned after result finalisation via iLearn with feedback given within.  |
-| Purpose								| The purpose of this task is to practice the use of 3D transformations and shader programming to implement a 3D scene with lighting and visual effects. |
-| Learning Outcomes Assessed			| ULO1: Understand the fundamentals of vector geometry and employ them in devising algorithms to achieve a variety of visual effects. |
-|                                       | ULO2: Implement a standard render pipeline to transform a 3D scene into a 2D image. |
-|                                       | ULO3: Apply matrices to implement and combine 3D transformations including rotation, translation, scale and perspective. |
-|                                       | ULO4: Program vertex and fragment shaders to implement effects such as lighting, texturing, shadows and reflections. |
-|                                       | ULO5: Communicate how advanced graphical algorithms operate through appropriate equations and geometrical diagrams. |
-| Skills assessed						| Using the methods and tools described in Lectures and Workshops, this task allows you to demonstrate: |
-|                  						| 1. Your ability to generate and transform 3D meshes in Java. |
-|                  						| 2. Your ability to write shader code to light 3D scenes. |
-|                  						| 3. Your ability to explain the design of your code in written documents and oral presentation |
-| How will this task be assessed? 		| This is a pair task. Individual marks will be assessed based on peer assesssment and viva in Week 13. |
-| Use of AI								| Open. AI may be use to assist in writing the code for this assignment, but you are still expected to understand how the code works and explain it clearly. |
-| Short automated extensions			| Accepted |
-
-# Task overview
-For this assessment, you will implement an interactive 3D scene in Java using OpenGL and document the design of your code.
-
-## Objectives
-This assignment covers the following topics:
-* 3D modelling with triangular meshes
-* 3D Transformations
-* Perspective & Orthographic cameras
-* Viewport & Scissor rectangles
-* Vertex and Fragment shaders
-* Illumination and shading
-* Texturing
-* Screen-space effects
-
-## Contents
-- [2026 Session 1 – COMP3170: Computer Graphics](#2026-session-1--comp3170-computer-graphics)
-  - [Assessment Task 3: 3D Interactive Visualisation](#assessment-task-3-3d-interactive-visualisation)
-- [Task overview](#task-overview)
-  - [Objectives](#objectives)
-  - [Contents](#contents)
-- [Task details](#task-details)
-  - [Framework](#framework)
-  - [Requirements](#requirements)
-    - [General requirements](#general-requirements)
-    - [World space](#world-space)
-    - [Features](#features)
-    - [Debug modes](#debug-modes)
-    - [Desert](#desert)
-    - [Road](#road)
-    - [Trees](#trees)
-    - [Car](#car)
-    - [Cameras](#cameras)
-    - [Lighting](#lighting)
-    - [Skyboxes](#skyboxes)
-    - [Effects: Heat shimmer (*Challenge*)](#effects-heat-shimmer-challenge)
-  - [Documentation](#documentation)
-- [Submission](#submission)
-  - [Eclipse project](#eclipse-project)
-  - [Viva](#viva)
-  - [Peer assessment](#peer-assessment)
-- [Quality Criteria](#quality-criteria)
-    - [Rubric](#rubric)
-
-# Task details
-
-This is a two-person group assignment. Your task is to build a 3D scene of a car driving through a desert: 
-
-![alt text](Images/Main.png)
-
-## Framework
-An Eclipse project containing a Java framework for the assignment is available via the GitHub classroom link on iLearn. This includes the model files and textures you will use. 
-
-Code has been provided to allow you to load models from a Wavefront OBJ file:
-* `ObjData.java` - The OBJ loader
-* `Mesh.java` - Mesh data (vertices, normals, uvs, indices)
-* `Material.java` - Unused.
-* `Tree.java` - Demonstration code, loading the `tree.obj` file. 
-
-You are free to edit this code if you desire.
-
-## Requirements
-
-### General requirements
-Your scene should be implemented using:
-* Anti-aliasing using 4x multisampling.
-* Backface culling
-* Mipmaps for all textures (with trilinear filtering)
-* Gamma correction (with a default gamma of 2.2)
-
-Correctness marks will be deducted if these not implemented correctly.
-
-### World space
-
-World space should be oriented so that the the j axis (i.e. the y coordinate) points upwards. The directions of the i and k axes can be set as you deem appropriate.
-
-For all world-unit calculations, 1 unit in world space should be equal to 1 metre. 
-
-### Features
-
-| Feature | Marks | 
-| ------- | ----- |
-| Debug modes                   |    |
-| - Wireframe mode              | 3% |
-| -  Normals mode               | 3% |
-| Desert                        |    |
-| - Mesh & normals              | 3% |
-| - UVs & texture               | 3% |
-| Road	                        |    |
-| - Mesh & normals              | 4% |
-| - Bezier mesh (*Challenge*)   | 8% |
-| - UVs & texturing             | 4% |
-| Trees                         | 2% |
-| Car                           |    |
-| - Meshes & normals            | 3% |
-| - UVs & Textures              | 3% | 
-| - Window Transparency         | 3% |
-| - Driving                     | 3% |
-| - Wheels                      | 3% |
-| - Animating wheels	          | 3% |
-| Cameras                       |    |
-| - Map                         | 4% |
-| - Third-person                | 4% |
-| Light                         |    |
-| - Day – Sun (diffuse & ambient)   | 4% |
-| - Day – Sun (specular)            | 4% |
-| - Night – Headlights (point)      | 4% |
-| - Night – Headlight cone	        | 4% |
-| Skybox                            | 4% |
-| Effects- Heat shimmer (*Challenge*)    | 4% |	
-| Report                            | 20% | 
-| **Total**                         | 100% |
-
-**Note**: 
-* The features labelled (*Challenge*) are more difficult, and require advanced techniques or concepts.
-
-The individual features for the assignment are described in detail below. Any requirement labelled **Document** indicates something that should be included in your report.
-
-### Debug modes
-
-#### Wireframe view
-
-* Pressing ‘4’ should toggle between filled and wireframe views of all the meshes in the scene. 
-
-![Wireframe view](Images/Wireframe.png)
-
-#### Normals view
-
-* Pressing ‘5’ should toggle on and off a mode in which all objects are shaded to display their normals in world coordinates (using a normal matrix), where the RGB colour values are equal to the normal coordinates (r,g,b) = (n_x,n_y,n_z).
-
-![Normals view](Images/Normals.png)
-    
-### Desert
-#### Mesh & Normals
-
-* The desert should be a flat, horizontal 100x100m square mesh centred at the origin of world space.
-* Vertex normals should be specified pointing directly upwards.
-
-#### UVs and texturing
-
-* Appropriate vertex UVs should be calculated for each vertex in the mesh.
-* One unit of texture space should map to 1m of world space.
-* The `sand.jpg` texture (in the `textures` folder) should be used to colour the mesh.
-
-### Road
-
-There are two options for constructing the road mesh, worth different amounts of marks. You can attempt either of these, but cannot claim marks for both.
-
-1. **Straight**: The road should consist of three straight segments, connecting the points (-25,0,-50), (-25,0,-25), (25,0,0), (25,0,50), as shown in the first below.
-2. **Bezier curve**: The road should follow a cubic Bezier curve with control points (-25,0,-50), (-25,0,-25), (25,0,0), (25,0,50), as shown in the second below.
-
-![Road - Straight](<Images/Road - Straight.png>)
-![Road - Bezier](<Images/Road - Bezier.png>)
-
-#### Mesh & normals
-
-![Road - Cross-section](<Images/Road - Cross section.png>)
-
-* The road mesh should have a trapezoidal cross-section, as shown in the image above.
-  * The flat top should have a constant width of 8m.
-  * The road should be raised 0.1m above the desert.
-  * The edges of the road should slope downwards at a 45 degree angle to meet the desert surface.
-* The mesh should be generated in code, rather than by hand, and should work for any sensible choice of the above control points.
-* The mesh should have appropriate normals.
-* **Document**: Illustrate how you calculate the road mesh.
-
-#### Bezier curve
-
-* The road should follow a cubic Bezier curve with the control points given above.
-* Extrude the cross-section shown above along this curve to create the road mesh (as shown in the week 5 lecture video).
-* The tangent vector to the Bezier curve for a parameter $t \in (0,1)$ is given by the function:
-
-$$B'(t) = 3(1-t)^2 (P_1 - P_0) + 6t(1-t)(P_2 - P_1) + 3t^2 (P_3 - P_2)$$
-
-* Normals should be converted from cross-section space to model-space using a normal matrix computed from the extrusion martix.
-
-#### UVs and Textures
-
-* The road should be textured using the `road.jpg` texture provided.
-* UVs should be calculated so that the texture repeats for every 16m of distance along the road. 
-
-### Trees
-
-Example code has been provided to load the tree mesh from the Wavefront OBJ file `tree.obj` (in the `models` folder). The model includes a submesh `Tree` with vertices, normals and UVs.
-
-* Several (more than 3) trees should be placed in the world at different positions, rotations, and scales.
-* The `tree.png` texture (in the `textures` folder) should be applied to the trees.
-
-### Car
-
-The car model is given to you as a Wavefront OBJ file `car.obj` (in the `models` folder). The model includes three submeshes:
-* `Body` – the outer body of the car.
-* `Interior` – the seats & other items inside the car
-* `Windows` – the car windows.
-
-Each of these meshes shares the same model coordinate frame (i.e. they can all be drawn with the same model matrix). Model space coordinates for the car are scaled so 1 unit = 1 metre.
-
-#### Mesh & Normals
-* The car (with all three submeshes) should initially be drawn at the centre of the map.
-* The car model is in US layout (steering wheel on the left). Flip the model so it is in Australian layout (steering wheel on the right).
-
-#### UVs and texturing
-Texture coordinates (UVs) for the car are specified in each of the submeshes. 
-* Use these coordinates to texture each part using the `car.png` texture provided (in the `textures` folder). All submeshes use the same texture.
-
-#### Window Transparency
-* The window submesh of the car should be rendered using alpha-blending to allow you to see in and out of the car. Use an alpha value of 0.2.
-![Car - Windows](<Images/Car - Windows.png>)
-
-#### Driving
-The car should be controlled using the WASD keys:
-* Pressing W and S should make the car move forward and backward at a constant speed.
-* Pressing A and D should make the car turn left and right.
-
-#### Wheels 
-A separate OBJ file `wheel.obj` is provided (in the models folder) containing the model for a single wheel of the car.
-
-* Attach four copies of this model to your car at the following coordinates in the car’s model space:
-    * Front left: (0.62, 0.35, 1.3) 
-    * Front right: (-0.62, 0.35, 1.3)
-    * Back left: (0.62, 0.35, -1.15)
-    * Back right: (-0.62, 0.35, -1.15) 
-* Make sure the wheels are rotated correctly so the hubcaps face outwards.      
-* Wheels should be textured using the `car.png` texutre provided (in the `textures` folder).
-
-#### Wheel rotation
-* The wheels should rotate in the correct direction and speed to match the movement of the car.
-* The left and right front wheels should turn left and right to match the steering of the car.
-
-![Car - Turning Left](<Images/Car - Turning left.png>)
-
-### Cameras
-There are two different main camera modes: 
-* Pressing 1 enables the **Map** camera.
-* Pressing 2 enbales the **Third person** camera.
-
-#### Map camera (orthographic)
-* The map camera is a top-down orthographic view of the map.
-* The map should be centred in the window.
-* Resizing the window should make the map larger or smaller.
-* If the aspect of the window does not match the aspect of the map, then black bars should be drawn on the left and right or top and bottom depending on whether the window is too wide or too tall.
-* Near and far planes should be set so the entire map is visible 
-* **Document**: Illustrate the viewport and scissor rectangle for this camera a window with resolution 800x600 pixels. Label the corners of each rectangle with coordinates in screen space, NDC, World and Viewport coordinates.
-
-![Camera - Orthographic](<Images/Camera - Map.png>)
-
-#### Third-person camera
-* The third-person camera is a perspective camera that follows the car from an external point of view.
-* The camera should always face towards the car’s position in world space and maintain a constant distance from the car’s origin.
-* The following keys should control the camera:
-  * Pressing the Left and Right arrow keys should rotate the camera clockwise and anticlockwise around the car, respectively.
-  * Pressing the Up and Down arrow keys should pitch the camera up and down, to a maximum of plus or minus 90 degrees (i.e straight up or straight down).
-  * Pressing the '.' (period) and ',' (comma) keys should dolly the camera towards and away from the car.
-  * Pressing Page Up and Page Down keys should zoom the camera in and out (i.e. change the field of view of the camera) between sensible minimum and maximum values. 
-* Resizing the window should change the aspect of the camera view volume to match, without affecting the vertial field of view.
-* Near and far planes should be set so the entire car is visible, as well as some of the surrounding landscape.
-* **Document**: Illustrate how you calculate the position and view volume of the third-person camera.
-
-![Camera - Third Person](<Images/Camera - Third Person.png>)
-
-### Lighting
-There should be two modes: Day and Night. The lights in the scene change depending on which mode.
-* Pressing the 3 key switches between Day and Night
-
-#### Day – Sun (diffuse & ambient)
-During the day:
-* The sky should be blue.
-* All objects should be lit with appropriate ambient and diffuse light.
-* Lighting calculations should be done using a directional light representing the sun.
-* Pressing the '[' key rotates the direction of the sun from east to west.
-* Pressing the ']' key rotates the direction of the sun from west to east.
-* **Document**: Illustrate how the lighting value for a point on the desert is calculated, for the third-person camera.
-
-#### Day – Sun (specular)
-* The body and windows (but not the interior) of the car should include specular highlights that reflect the sun.
-* **Document**: Illustrate how the specular lighting for the car’s windscreen is calculated when lit by the sun and viewed using the third-person camera.
-
-#### Night – Headlight (diffuse & ambient)
-During the night:
-* The sky should be black.
-* Lighting calculations should be done using a point light attached to the front of the car at (0, 0.93, 2.1) in the car's model space.
-* Only a single light needs to be used, rather than one per headlight.
-* All objects should be lit with appropriate ambient and diffuse light.
-* **Document**: Illustrate how the lighting value for a point on the desert is calculated, for the third-person camera.
-
-#### Night – Headlight cone
-* The Headlight should emit light along a 60-degree cone pointing in the forward direction. Objects outside of the cone should not be lit. 
-* Only a single light cone needs to be shown, rather than one per headlight.
-* The intensity of the light should drop with distance from the source, following the equation: $I = I_{max} * min(1, 1 / d)$, where $I_{max}$ is the maximum intensity and $d$ is the distance from the light source to the lit point.
-* **Document**: Illustrate how you calculate whether an object is lit by the headlight
-
-![Headlight cone](<Images/Night - Headlight cone.png>)
-
-### Skyboxes
-Textures have been prodvided for two skyboxes `jettelly_no_moon_XXX.png` for Night and `jettelly_sunshine_XXX.png` for Day (in the `textures/skies` folder).
-* Display each skybox in the corresponding Day/Night mode.
-* Skyboxes should be drawn behind all other objects in the scene.
-* Skyboxes should follow the camera position (but not rotation), as described in lectures.
-
-### Effects: Heat shimmer (*Challenge*)
-* Using a screen-space effect, add a 'heat shimmer' during the Day.
-* The shimmer should distort the view in animated waves rising up the screen.
-* See [this video](https://echo360.net.au/media/04b54547-42de-4539-a110-8b5051fae80e/public) for an example of this effect.
-* You are free to interpret this requiment as you see fit, but should demonstrate your ability to use screen-space effects appropriately.
- 
-## Documentation
-
-You should complete the template report provide as `Report.md` in the repository. The report should include a completed table indicating the features you have attempted, as well as the per-feature documentation required above.
-
-Documentation is marked separately from implementation but should reflect the approach taken in your code. You can attempt documentation questions for features you have not implemented or completed but should indicate where this is the case.
+# COMP3170 Assignment 1 Report
+
+### Student 1 Name: [Cadigal]
+### Student 1 ID: [47100192]
+
+### Student 2 Name: [Tanish]
+### Student 2 ID: [47896345]
+
+## Your Development Environment
+### Cadigal (47100192)
+
+| Spec                                                | Answer                                                                  |
+|-----------------------------------------------------|-------------------------------------------------------------------------|
+| Java JDK version used for compilation               | Amazon Corretto 21.0.3 AArch64                                          |
+| Java compiler compliance level used for compilation | 21 - Record patterns, pattern matching for switch                       |
+| Java JRE version used for execution                 | Same as JDK                                                             |
+| Eclipse version                                     | N/A, IntelliJ IDEA 2024.2.4 (Community Edition) Build #IC-242.23726.103 |
+| Your screen dimensions (width x height)             | 2560x1600 13.3 inch Retina display (4 sub pixels per pixel)             |
+| Your computer type (Mac/PC)                         | MacBook Air                                                             |
+| Your computer make and model                        | M1, 2020, 16GB                                                          |
+| Your computer Operating System and version          | OSX Tahoe 26.1 (25B78)                                                  |
+
+### Tanish (47896345)
+
+|Spec|Answer|
+|----|-----|
+|Java JDK version used for compilation|22.0.2|
+|Java compiler compliance level used for compilation|21|
+|Java JRE version used for execution| 22.0.2 (build 22.0.2+9-70)|
+|Eclipse version|Version: 2026-03 (4.39.0)|
+|Your screen dimensions (width x height)|1920 x 1080|
+|Your computer type (Mac/PC)|PC|
+|Your computer make and model|Acer Nitro AN515-45|
+|Your computer Operating System and version|Windows 11 Home Single Language, 25H2|
+
+## Features Attempted
+Complete the table below indicating the features you have attempted. This will be used as a guide by your marker for what elements to look for, and dictate your <b>Completeness</b> mark.
+
+| Feature                             | Attempted | 
+|-------------------------------------|-----------|
+| Debug modes                         |           | 
+| - Wireframe mode                    | YES       |
+| -  Normals mode                     | YES       |
+| Desert                              |           |
+| - Mesh & normals                    | YES       |
+| - UVs & texture                     | YES       |
+| Road                                |           |
+| - Mesh & normals                    | YES 	  |
+| - Bezier mesh (*Challenge*)         | YES 	  |
+| - UVs & texturing                   | YES 	  |
+| Trees                               | YES 	  |
+| Car                                 |           |
+| - Meshes & normals                  | YES       |
+| - UVs & Textures                    | YES       |
+| - Window Transparency               | YES       |
+| - Driving                           | YES       |
+| - Wheels                            | YES       |
+| - Animating wheels                  | YES       |
+| Cameras                             |           |
+| - Map                               | YES       |
+| - Third-person                      | YES       |
+| Light                               |           |
+| - Day – Sun (diffuse & ambient)     | YES 	  |
+| - Day – Sun (specular)              | YES 	  |
+| - Night – Headlights (point)        | YES 	  |
+| - Night – Headlight cone            | YES 	  |
+| Skybox                              | YES       |
+| Effects- Heat shimmer (*Challenge*) | YES       |
+
+# Documentation
+
+Documentation is marked separately from implementation but should reflect the approach taken in your code. You can attempt documentation questions for features you have not implemented or completed, but should clearly indicate that this is the case. 
 
 Documentation should include both diagrams and relevant equations to explain your solution. 
 
 **Note**: Copy/pasting images directly from the lecture notes (or other sources) will get zero marks (and may be treated as academic misconduct).
 
-Document marks will be assigned per-question as:
+Where requested, meshes should be drawn to scale in model coordinates, including:
+* The origin
+* The X and Y axes
+* The coordinates of each vertex
+* The triangles that make the mesh
 
-| Feature | Marks |
-|---------|-------|
-| Scene graph | 2% |
-| Road - Mesh | 3% |
-| Lighting - Day - Diffuse & Ambient | 3% |
-| Lighting - Day - Specular | 3% |
-| Lighting - Night - Diffuse & Ambient | 3% |
-| Lighting - Night - Headlight cones | 2% |
-| Cameras - Map | 2% |
-| Cameras - Third-person | 2% |
-| **Total** | 20% |
+## Scene Graph
 
-# Submission
+* Include a drawing (pen-and-paper or digital) of the scene graph used in your project.
+* Where there are multiple copies of an object at the same point in the graph (e.g. the trees) only a single instance needs to be shown.
 
-## Eclipse project 
+```mermaid
+%% This code produces a visual diagram using Mermaid.js
+%% If you can see this code, not the diagram, view this file on GitHub (which renders mermaid diagrams)
+%% Alternatively, paste this code into a mermaid renderer e.g. https://mermaid.live/edit
+flowchart TD
+    Scene -- " Skybox is first in the scene so everything \n else draws over them " --> Skybox("Skybox")
+    Scene ----> Desert("Desert")
+    Desert ----> Road("Road")
+    Desert ----> Car("Car")
+    Car ----> Wheel("Wheel (x4)")
+    Desert --> Tree("Tree \n Individual trees are instanced and data is stored in \n GPU buffers, they have no individual SceneObjects")
+```
+There are a few other things in the `Scene` class that are not SceneObjects and therefore not strictly part of the SceneGraph:
+1. Light
+1. Third Person (Perspective) Camera
+1. Map (Orthographic) Camera
+1. Free (Flight) Debugging Camera
+1. ActiveCamera - points to the currently selected camera (one of the other three cameras)
 
-Your project will be submitted using Github Classroom. Your most recent commit to the repository before the assignment deadline will be marked. Use the commit message `Final Submssion` to make it clear that you are submitting your work.
+## Road Mesh
 
-## Viva
+Illustrate how you construct the road mesh, including:
+* vertices
+* normals
+* construction into triangles in the index buffer
 
-As part of this assessment, you will deliver a **viva** in your Week 13 SGTA. Your TA will interview you and your programming partner, so ensure you are both present. 
-* A separate session is also available during the Week 13 lecture time if you are unable to make this time. This requires booking through iLearn.
-* Each team member should identify a major component of the assignment (e.g. the road mesh, the cameras, or the lighting shaders) that they are leading the development on, and be prepared to answer questions about progress, methods used, relevant course content, and the plan for the last few days of development.
-* The expectation during this viva is not that your project will be finished, but that you have begun work and have an active understanding of what you are undertaking.
-* Each viva will last for 10 minutes, with 5 minutes per team member. It is important to be mindful of this time, and allow your partner space to speak. Please do not interrupt or speak for your partner, nor defer to them to answer for you.
-* Insights gained during the viva process will be used to determine final, individual marks for the task, as well as contribute to relevant rubric items.
-  
-## Peer assessment
-You will also submit individual **peer assessment** reports, using the form provided on iLearn, to assess both your own contribution and that of your teammate. You need to provide a grade (following the rubric given in the template) and a justification for the grade. This grade will be kept private from your teammate but will be used as evidence to adjust the final individual grade weighting. 
+Vertices:
+1. The Bézier curve is sampled at a number of points
+2. The road is made up of a number of segments (a start point and the following end point on the Bézier curve)
+3. For each segment, perpendicular normal vectors are generated (pictured)
+4. For each segment, a road quad is generated from the start point to the end point, with vertices extended/extruded by half the road width laterally on each side along the perpendicular normal, creating a quad spanning the whole segment
+5. Using similar extrusion, quads for the slopes on either side are added
+![ReportRoadPerpendiculars.png](./Images/ReportRoadPerpendiculars.png)
+![ReportRoadQuads.png](./Images/ReportRoadQuads.png)
 
-# Quality Criteria
-A high-quality submission is:
-* Correctly implemented, making appropriate use of the OpenGL and JOML libraries in Java, and GLSL functions in shaders.
-* Clearly implemented, with code that well structured and easy to follow. 
-* Clearly documentated, with appropriate use of diagrams and equations to convey the geometrical and mathematical details of the code.
+Normals:
+1. Normals for the road top are trivial, they point directly up, and were originally hardcoded. 
+2. Normals for the slopes are more involved, as the quads aren't pointing directly on 1 axis. 
+3. Therefore, all normals are automatically calculated:
+4. Each quad is split into two triangles along the v1-v2 diagonal. 
+5. For each triangle, two edge vectors are computed from a shared corner. 
+6. The cross product of two edge vectors produces the triangle normal. 
+7. The corner vertices (v0, v3) each belong to only one triangle, so they take that triangle's normal directly. 
+8. The shared vertices (v1, v2) each belong to both triangles, so the normals are averaged together, so that if the quad was bent (they aren't in this case though), lighting would still be smooth over the bend.
 
-### Rubric
+Indexing:
+1. The vertices are stored in an array that can be though of as being indexed in two dimensions `[segment][quad]`. 
+2. Indexing is done by stepping through every four vertices (single quad) and adding six indices (two triangles). 
+3. Vertices between quads are not shared, even though there are vertices with the same position as vertices in other quads, as the UVs differ. 
+4. Each segment has 12 unique vertices (3 quads * 4 vertices per quad).
+![ReportRoadNormalsAndIndexing.png](./Images/ReportRoadNormalsAndIndexing.png)
 
-Your final mark will be determined using the following formula:
 
-#### Code
-Each feature attempted by you will be marked using the rubric below.
+## Lighting
 
-|Criteria|Grade|Description|
-|-|-|-|
-|Correctness (50%) |HD (100)|Code relevant to feature is free from any apparent errors. Problems are solved in a suitable fashion. Contains no irrelevant code.|
-||D (80)|Code relevant to feature has minor errors which do not significantly affect performance. Contains no irrelevant code.|
-||CR (70)|Code relevant to feature has one or two minor errors that affect performance. Problems may be solved in ways that are convoluted or otherwise show lack of understanding. Contains some copied or generated code that is not relevant to the problem.|
-||P (60)|Code relevant to feature is functional but contains major flaws. Contains large passages of copied or generated code that are not relevant to the problem.|
-||F (0-40)|Code relevant to feature compiles and runs, but major elements are not functional.|
-|Clarity (50%) |HD (100)|Good consistent style. Well structured & commented code relevant to feature. Appropriate division into classes and methods, to make implementation clear.|
-||D (80)|Code relevant to feature is readable with no significant code-smell. Code architecture is adequate but could be improved.|
-||CR (70)|Code relevant to feature is readable but has some code-smell that needs to be addressed. Code architecture is adequate but could be improved.|
-||P (60)|Significant issues with quality of code relevant to feature. Inconsistent application of style. Poor readability with code-smell issues. Code architecture could be improved.|
-||F (0-40)|Significant issues with quality of code relevant to feature. Inconsistent application of style. Poor readability with code-smell issues. Messy code architecture with significant encapsulation violations.|
+All lighting is computed per-fragment in `simple.frag` (and `instanced_fragment.glsl` for the Trees) using the world-space surface
+normal from the vertex shader, following the Phong model (ambient + diffuse + specular).
+Day / Night modes are toggled with `3` and select which light is active. Texture
+colours are decoded to linear (`pow(colour, 2.2)`) before lighting and the final result
+is gamma-encoded (`pow(result, 1/2.2)`) for display.
+ 
+---
+ 
+## 1. Day – Diffuse & Ambient for a point on the car
+ 
+During the day the scene is lit by a **directional light** representing the sun. It is
+infinitely far away, so its rays are parallel and it is described by a single direction
+shared by the whole scene (a direction only, no position).
+ 
+A point on the car is lit by an **ambient** term plus a **diffuse** term.
+ 
+The **diffuse** term measures how directly the surface faces the sun, using the dot
+product of the unit surface normal **N** and the unit direction to the light **L**,
+clamped to be non-negative:
+ 
+    diffuse = max(0, N · L)
+ 
+Since N and L are unit vectors, N · L = cos θ, where θ is the angle between them. A car
+panel facing the sun (θ = 0°) is fully lit; as it turns away the value drops; once it
+faces away, max(0, …) clamps it to 0. Unlike the flat desert, a point on the car has a
+normal N that points in whatever direction that panel faces (the bonnet up-and-forward, a
+door sideways, etc.), so different panels receive different light — this is what makes the
+car read as a 3-D shape. As the car drives and turns, each panel's normal changes relative
+to the fixed sun direction, so panels brighten and darken.
+ 
+The **ambient** term is a constant colour added everywhere regardless of orientation,
+approximating scattered skylight so unlit panels are not pure black. The ambient intensity
+is **(0.25, 0.25, 0.25)**, chosen so shadowed panels stay faintly visible.
+ 
+The terms are summed and multiply the (linear) texture colour:
+ 
+    lighting    = ambient + lightColour · max(0, N · L)
+    finalColour = textureColour · lighting
+ 
+(The car body also adds the specular)
+ 
+**Third-person camera:** diffuse and ambient are view-independent — they depend only on
+the panel's normal and the sun direction, not the camera. A given car point looks the same
+brightness from any third-person camera position.
 
-#### Documentation
-Each component of your documentation will be marked using the rubric below.
+![Figure 1](Images/report_lighting1.jpeg)
 
-|Grade|Description|
-|-|-|
-|HD (100)|Illustrations are neat, clear and well annotated. Relevant equations are provided and clearly annotated. No discrepancies between explanation and code (except as noted).|
-|D (80)|Illustrations are neat and clear. Relevant equations are provided. No discrepancies between explanation and code (except as noted).|
-|CR (70)|Minor sloppiness or missing detail. Equations are provided but include minor inaccuracies. Minor discrepencies between documentation and code.|
-|P (60)|Significant sloppiness or missing detail. Equations are provided but include major inaccuracies. Values in illustrations show understanding of task, but may not reflect code.|
-|F (0-40)|Illustrations are unclear and badly drawn. Does not make use of graph paper. Equations are not provided or are not relevant to explanation.|
+## 2. Day – Specular for a point on the car
+
+Specular highlights are the bright glints seen on glossy surfaces such as the
+car's paint and windscreen. Unlike diffuse, specular **depends on the camera
+position**, because a highlight appears only where the sun reflects off the
+surface directly toward the viewer. The car's **body and windows** receive
+specular highlights; the **interior does not**, since matte surfaces do not glint.
+
+Three unit directions at the surface point are used:
+
+- **N** – the surface normal.
+- **L** – the direction to the sun.
+- **V** – the direction from the surface point to the camera:
+  `V = normalize(cameraPosition − surfacePosition)`.
+
+The sun direction is reflected about the normal to give the reflection direction **R**:
+
+    R = reflect(−L, N)
+
+The incoming ray travels in direction −L (from the sun towards the surface), so it
+is negated before being reflected about the normal. The highlight is brightest when
+the reflected ray **R** points towards the camera — that is, when **R** and **V**
+are aligned. This alignment is measured by their dot product, clamped to be
+non-negative and raised to a shininess exponent:
+
+    specular = lightColour · max(0, R · V) ^ shininess
+
+The shininess exponent (32 in this implementation) controls how tight the highlight
+is: a higher exponent gives a smaller, sharper glint, while a lower one gives a
+broader, softer sheen. The specular term takes the colour of the light rather than
+the surface, so the glint on the dark-red car appears white. It is added on top of
+the ambient and diffuse result:
+
+    finalColour = textureColour · (ambient + lightColour · max(0, N · L)) + specular
+
+**Third-person camera:** because **V** is computed from the camera position, the
+specular highlight slides across the windscreen as the third-person camera orbits
+the car — it appears wherever the sun's reflection currently points towards the
+camera. The camera's world position is obtained from the translation column of the
+third-person camera's camera-to-world matrix.
+
+![Figure 2](Images/report_lighting2.jpeg)
+
+*Figure 2: Day specular lighting at a point P on the car's windscreen, showing the
+normal N, the direction to the sun L, the reflected direction R, and the direction
+to the camera V. The highlight is brightest when R aligns with V.*
+
+## 3. Night – Diffuse & Ambient for a point on the desert
+
+At night the sky is dark and the only light is a **point light** representing the
+car's headlight. It is positioned at **(0, 0.93, 2.1)** in the car's model space
+(just above and ahead of the front bumper). Its world position is recomputed each
+frame by transforming this model-space point by the car's model-to-world matrix
+together with a 180° rotation about the Y axis to match the car's orientation, so
+the light moves and turns with the car.
+
+A point light has a **position** and radiates outward, so unlike the directional
+sun the direction to the light is **different for every surface point**. For a
+desert point at world position **P**, the direction to the light is:
+
+    L = normalize(lightPosition − P)
+
+The desert is flat, so its surface normal is **N = (0, 1, 0)**. The diffuse and
+ambient calculation is then the same form as in day mode:
+
+    lighting    = ambient + lightColour · max(0, N · L)
+    finalColour = textureColour · lighting
+
+The key difference from the sun is that **L** is computed per point from the
+headlight's position, so the desert is lit only near the car, and the lit region
+follows the car as it drives. (The intensity is additionally restricted to a
+forward cone and falls off with distance — see Section 4.) Ambient is still added
+everywhere, so areas outside the beam remain dim rather than fully black.
+
+**Third-person camera:** the diffuse and ambient value of a desert point depends
+only on its position and normal and on the headlight's position — it is
+view-independent. The camera changes only what is visible, not how bright each
+point is.
+
+![Figure 3](Images/report_lighting3.jpeg)
+
+*Figure 3: Night diffuse and ambient lighting at a point P on the desert. The
+direction to the light L is computed per point from the headlight's position
+(L = normalize(lightPosition − P)), unlike the directional sun.*
+
+## 4. Night – Headlight cone
+
+The headlight is modelled as a **spotlight** that lights only points lying within a
+**60° cone** aimed in the car's forward direction; points outside the cone receive
+no direct light (only ambient). The intensity inside the cone also falls off with
+distance from the headlight.
+
+**Cone test.** Two unit directions at the headlight are compared:
+
+- **S** – the direction the headlight points. This is the car's forward direction,
+  tilted slightly downward as (0, −0.3, 1) in model space so the beam illuminates
+  the road ahead, then transformed to world space by the car's orientation.
+- **D** – the direction from the headlight toward the surface point:
+  `D = normalize(P − lightPosition)` (equivalently −L).
+
+The angle between **S** and **D** is how far off the beam's centre the point lies.
+Since both are unit vectors, their dot product gives the cosine of that angle:
+`S · D = cos(angle)`. The full cone is 60° wide, so a point is inside it if it lies
+within **30°** (the half-angle) of the centre line. Because cosine decreases as the
+angle grows, the test "angle ≤ 30°" becomes:
+
+    point is lit  ⇔  S · D ≥ cos(30°)
+
+If this holds, the point is inside the cone and is lit; otherwise its direct
+contribution is set to zero..
+
+**Distance falloff.** For points inside the cone, the intensity decreases with
+distance **d** from the headlight, following the specified equation:
+
+    I = Imax · min(1, 1 / d)        where d = length(lightPosition − P), Imax = 1
+
+Far from the light, 1/d is small, so the point is dim; very close (d < 1),
+min(1, 1/d) caps the intensity at Imax so it does not grow without bound. This
+intensity multiplies the diffuse (and any specular) contribution; ambient is
+unaffected, so points outside the cone are dim rather than fully black.
+
+Combined:
+
+    if (S · D ≥ cos 30°):   intensity = min(1, 1/d)
+    else:                    intensity = 0
+    diffuse = max(0, N · L) · intensity
+
+**Third-person camera:** whether a point lies within the cone depends only on the
+headlight's position and aim and the point's position — it is independent of the
+camera. The camera simply views the resulting forward-projected beam from behind
+the car.
+
+![Figure 4](Images/report_lighting4.jpeg)
+
+*Figure 4: The headlight cone test. A point is lit only if the angle between the
+headlight's aim S and the direction to the point D is within 30° (half of the 60°
+cone), i.e. S · D ≥ cos 30°. Intensity falls off with distance as I = Imax·min(1, 1/d).*
+
+## Camera 
+
+* Illustrate the viewport and scissor rectangle for the Map camera for a window with resolution 800x600 pixels. Label the corners of each rectangle with coordinates in screen space, NDC, World and Viewport coordinates.
+![ReportMapCamera.png](./Images/ReportMapCamera.png)
+
+* Illustrate how you calculate the position and view volume of the Third-Person camera.
+
+```mermaid
+%% This code produces a visual diagram using Mermaid.js
+%% If you can see this code, not the diagram, view this file on GitHub (which renders mermaid diagrams)
+%% Alternatively, paste this code into a mermaid renderer e.g. https://mermaid.live/edit
+flowchart TD
+    carMatrix("Car matrix \n position + heading of car in world")
+    carMatrix ----> rotateY("rotateY(rotationRadians) \n orbit left/right \n range 0..2pi")
+    rotateY ----> translate("translate(0, 5, dollyMeters) \n +5 m up \n dollyMeters back/away \n range 1..20m ")
+    translate ----> rotateX("rotateX(pitchRadians) \n tilt view up/down (down by default) \n range −90..+90 degrees")
+    rotateX ----> cameraMatrix("cameraMatrix \n world-space position and orientation of camera")
+    cameraMatrix ----> viewMatrix("getViewMatrix \n viewMatrix = cameraMatrix.inverse() \n transforms world coords into camera space")
+    viewMatrix --> mvpMatrix("mvpMatrix = projMatrix * viewMatrix \n passed to every shader as u_mvpMatrix")
+    projMatrix("getProjectionMatrix \n projMatrix = setPerspective(fovZoom, aspect, 0.1, 500) \n range 5..120 degrees")
+    projMatrix --> mvpMatrix
+```
+![ReportThirdPersonCamera.png](./Images/ReportThirdPersonCamera.png)
